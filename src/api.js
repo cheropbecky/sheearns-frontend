@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.trim() || "http://127.0.0.1:8000";
+  import.meta.env.VITE_API_BASE_URL?.trim() || "https://sheearns-backend.onrender.com";
 
 const GET_CACHE_TTL_MS = 60 * 1000;
 const getCache = new Map();
