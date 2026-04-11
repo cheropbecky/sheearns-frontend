@@ -55,7 +55,7 @@ export default function Bookings() {
 
       <main className="pt-28 px-6 pb-20">
         <div className="max-w-5xl mx-auto bg-white rounded-3xl p-8 shadow-sm">
-          <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-3xl font-extrabold text-[#500088]">My Bookings</h1>
+          <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#500088]">My Bookings</h1>
           <p className="text-[#4c4452] mt-2">Track all your service requests and current status.</p>
 
           {!isLoggedIn && (

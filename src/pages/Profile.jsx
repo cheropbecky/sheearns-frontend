@@ -44,6 +44,7 @@ export default function Profile() {
   const [listingMinPrice, setListingMinPrice] = useState(1000);
   const [listingMaxPrice, setListingMaxPrice] = useState(3000);
   const [portfolioUrlsText, setPortfolioUrlsText] = useState("");
+  const [portfolioUploadUrls, setPortfolioUploadUrls] = useState([]);
   const [myListings, setMyListings] = useState([]);
   const [listingsLoading, setListingsLoading] = useState(true);
   const [listingsNotice, setListingsNotice] = useState("");
@@ -98,6 +99,7 @@ export default function Profile() {
           id: payload?.id || user?.id || null,
           name: payload?.full_name || user?.name || "Queen",
           email: payload?.email || user?.email || "",
+          monthlyGoal: payload?.monthly_goal || user?.monthlyGoal || 5000,
           avatar: payload?.avatar_url || null,
           services: payload?.services || [],
           notificationsEnabled: payload?.notifications_enabled ?? true,
@@ -131,6 +133,29 @@ export default function Profile() {
     reader.readAsDataURL(file);
   };
 
+  const handlePortfolioUpload = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    try {
+      const uploads = await Promise.all(
+        files.map(
+          (file) =>
+            new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(String(reader.result || ""));
+              reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+              reader.readAsDataURL(file);
+            }),
+        ),
+      );
+
+      setPortfolioUploadUrls((currentUploads) => [...currentUploads, ...uploads.filter(Boolean)]);
+    } finally {
+      event.target.value = "";
+    }
+  };
+
   const handleAddService = () => {
     const value = newService.trim();
     if (!value) return;
@@ -162,6 +187,7 @@ export default function Profile() {
         id: payload?.id || user?.id || null,
         name: payload?.full_name || user?.name || "Queen",
         email: payload?.email || user?.email || "",
+        monthlyGoal: payload?.monthly_goal || user?.monthlyGoal || 5000,
         avatar: payload?.avatar_url || null,
         services: payload?.services || servicesDraft,
         notificationsEnabled: payload?.notifications_enabled ?? true,
@@ -197,10 +223,15 @@ export default function Profile() {
     setNotice("");
 
     try {
-      const portfolioUrls = portfolioUrlsText
+      const portfolioUrls = Array.from(
+        new Set([
+          ...portfolioUploadUrls,
+          ...portfolioUrlsText
         .split("\n")
         .map((line) => line.trim())
-        .filter(Boolean);
+        .filter(Boolean),
+        ]),
+      );
 
       await apiRequest("/services", {
         method: "POST",
@@ -219,6 +250,7 @@ export default function Profile() {
       setListingTitle("");
       setListingDescription("");
       setPortfolioUrlsText("");
+      setPortfolioUploadUrls([]);
       window.setTimeout(() => {
         window.history.pushState({}, "", "/marketplace");
         window.dispatchEvent(new PopStateEvent("popstate"));
@@ -313,7 +345,7 @@ export default function Profile() {
         <Navbar active="How It Works" />
         <main className="pt-28 px-6 pb-20">
           <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 text-center">
-            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-3xl font-extrabold text-[#500088]">Profile</h1>
+            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#500088]">Profile</h1>
             <p className="text-[#4c4452] mt-3">Please log in to edit your profile.</p>
             <a href="/login" className="inline-block mt-6 bg-[#500088] text-white px-5 py-3 rounded-2xl font-bold no-underline">Go to Login</a>
           </div>
@@ -329,7 +361,7 @@ export default function Profile() {
 
       <main className="pt-28 px-6 pb-20 flex-1">
         <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="lg:col-span-1 bg-white rounded-3xl p-6 shadow-sm">
+          <section className="lg:col-span-1 bg-white rounded-3xl p-6 shadow-sm self-start h-fit">
             <div className="flex flex-col items-center text-center gap-3">
               <div className="relative">
                 {avatarDraft ? (
@@ -344,13 +376,13 @@ export default function Profile() {
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
                 </label>
               </div>
-              <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-2xl font-extrabold text-[#1c1c18]">{user?.name || "Queen"}</h1>
+              <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl lg:text-2xl font-extrabold text-[#1c1c18]">{user?.name || "Queen"}</h1>
               <p className="text-sm text-[#4c4452]">{user?.email || "No email added"}</p>
             </div>
           </section>
 
           <section className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-2xl font-bold text-[#1c1c18] mb-4">My Services</h2>
+            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl lg:text-2xl font-bold text-[#1c1c18] mb-4">My Services</h2>
             <p className="text-[#4c4452] text-sm mb-5">Add the services you currently offer so clients can understand your strengths.</p>
 
             <div className="flex gap-3 mb-5">
@@ -419,6 +451,34 @@ export default function Profile() {
                 placeholder="Portfolio image URLs (one per line, optional)"
                 className="w-full bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none min-h-20 mt-3"
               />
+
+              <div className="mt-3 rounded-xl border border-dashed border-[rgba(80,0,136,0.25)] bg-[#faf7ff] px-4 py-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-[#1c1c18]">Upload portfolio photos</p>
+                    <p className="text-xs text-[#4c4452]">You can upload image files directly or paste URLs above.</p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 bg-[#500088] text-white font-bold text-sm px-4 py-2 rounded-xl cursor-pointer hover:opacity-90 transition-opacity">
+                    <Camera size={14} /> Choose files
+                    <input type="file" accept="image/*" multiple className="hidden" onChange={handlePortfolioUpload} />
+                  </label>
+                </div>
+                {portfolioUploadUrls.length > 0 && (
+                  <div className="mt-3">
+                    <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+                      {portfolioUploadUrls.slice(0, 12).map((src, index) => (
+                        <img
+                          key={`${src}-${index}`}
+                          src={src}
+                          alt={`Uploaded portfolio ${index + 1}`}
+                          className="w-10 h-10 rounded-md object-cover border border-[rgba(207,194,212,0.35)] shadow-sm"
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-2 text-xs text-[#500088] font-semibold">{portfolioUploadUrls.length} uploaded photo(s)</div>
+                  </div>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
                 <input
@@ -497,7 +557,7 @@ export default function Profile() {
                             <div className="flex items-start justify-between gap-4">
                               <div>
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <h4 className="font-bold text-[#1c1c18] text-lg">{listing.title}</h4>
+                                  <h4 className="font-bold text-[#1c1c18] text-sm md:text-base">{listing.title}</h4>
                                   <span className={`text-xs font-bold px-2 py-1 rounded-full ${listing.is_active ? "bg-[rgba(22,163,74,0.12)] text-green-700" : "bg-[rgba(220,38,38,0.12)] text-red-700"}`}>
                                     {listing.is_active ? "Active" : "Inactive"}
                                   </span>
@@ -511,7 +571,7 @@ export default function Profile() {
                               </div>
                             </div>
 
-                            <p className="text-sm text-[#4c4452] leading-relaxed">{listing.description}</p>
+                            <p className="text-sm text-[#4c4452] leading-normal sm:leading-relaxed">{listing.description}</p>
 
                             <div className="flex flex-wrap gap-3">
                               <button onClick={() => startEditingListing(listing)} className="inline-flex items-center gap-2 border border-[#cfc2d4] text-[#1c1c18] px-4 py-2.5 rounded-xl text-sm font-bold hover:border-[#500088] transition-colors">
@@ -525,7 +585,7 @@ export default function Profile() {
                         ) : (
                           <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between gap-3">
-                              <h4 className="font-bold text-[#1c1c18] text-lg">Editing listing</h4>
+                              <h4 className="font-bold text-[#1c1c18] text-sm md:text-base">Editing listing</h4>
                               <button onClick={cancelEditingListing} className="text-[#4c4452] hover:text-[#500088] inline-flex items-center gap-1 text-sm font-bold">
                                 <X size={16} /> Cancel
                               </button>

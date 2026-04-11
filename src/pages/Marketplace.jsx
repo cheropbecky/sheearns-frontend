@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { imageOne, imageFive, avatarPool } from "../assets/localImages";
 
 const categories = [
   "All",
@@ -41,21 +42,11 @@ const categories = [
   "Tech Support",
 ];
 
-const marketplaceHeroImage = "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1400&q=60&auto=format&fit=crop";
+const marketplaceHeroImage = imageOne;
 
-const fallbackAvatar = "https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&q=80&auto=format&fit=crop";
+const fallbackAvatar = imageFive;
 
-const queenFallbackAvatars = [
-  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80&auto=format&fit=crop&face",
-  "https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=200&q=80&auto=format&fit=crop",
-];
+const queenFallbackAvatars = avatarPool;
 
 function formatPriceRange(min, max) {
   const safeMin = Number(min || 0);
@@ -67,7 +58,7 @@ function formatPriceRange(min, max) {
 }
 
 function ServiceCard({ service, index, onBook }) {
-  const avatar = service.avatar_url || service.avatar || service.portfolio_urls?.[0] || queenFallbackAvatars[index % queenFallbackAvatars.length] || fallbackAvatar;
+  const avatar = service.avatar_url || service.provider_avatar_url || service.avatar || service.portfolio_urls?.[0] || queenFallbackAvatars[index % queenFallbackAvatars.length] || fallbackAvatar;
 
   return (
     <div data-aos="fade-up" data-aos-delay={index * 100} className="bg-white rounded-3xl p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:ring-2 hover:ring-[rgba(80,0,136,0.2)] flex flex-col gap-4">
@@ -82,7 +73,7 @@ function ServiceCard({ service, index, onBook }) {
 
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg">{service.provider_name || "SheEarns Queen"}</h3>
+          <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-sm md:text-base">{service.provider_name || "SheEarns Queen"}</h3>
           <BadgeCheck size={16} strokeWidth={1.5} className="text-[#500088]" />
         </div>
         <p className="text-[#500088] text-sm font-medium">{service.title}</p>
@@ -264,16 +255,16 @@ export default function Marketplace() {
 
       <main className="pt-32 pb-24 px-6">
         <div className="max-w-7xl mx-auto flex flex-col gap-12">
-          <div data-aos="fade-down" className="relative overflow-hidden bg-[#500088] rounded-3xl p-12 flex flex-col gap-4">
+          <div data-aos="fade-down" className="relative overflow-hidden bg-[#500088] rounded-3xl h-100 sm:h-125 md:h-140 p-8 sm:p-10 md:p-12 flex flex-col justify-end gap-4">
             <img src={marketplaceHeroImage} alt="" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 w-full h-full object-cover object-center" />
-            <div className="absolute inset-0 bg-linear-to-br from-[rgba(80,0,136,0.92)] to-[rgba(80,0,136,0.85)]" />
+            <div className="absolute inset-0 bg-linear-to-br from-[rgba(80,0,136,0.68)] to-[rgba(80,0,136,0.58)]" />
             <div className="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-[rgba(133,83,0,0.15)]" />
             <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[rgba(107,0,62,0.15)]" />
             <div className="relative z-10">
-              <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-5xl lg:text-7xl leading-tight inline-flex items-center gap-3">
-                <ShoppingBag size={44} strokeWidth={1.5} /> Find a Queen. Hire a Queen.
+              <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-4xl sm:text-5xl lg:text-7xl leading-tight inline-flex items-center gap-3">
+               Find a Queen. Hire a Queen.
               </h1>
-              <p className="text-[#d7a8ff] text-xl mt-4 max-w-150">
+              <p className="text-[#d7a8ff] font-bold text-sm md:text-base mt-4 max-w-150">
                 Browse skilled women near you ready to serve. Every queen on SheEarns is verified and ready to work.
               </p>
             </div>
@@ -346,7 +337,7 @@ export default function Marketplace() {
               </select>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between text-xs text-[#4c4452]">
-                  <span className="font-bold uppercase tracking-widest">Budget</span>
+                  <span className="font-bold uppercase tracking-wide sm:tracking-widest">Budget</span>
                   <span className="font-bold">Ksh 0 - {budgetMax.toLocaleString()}</span>
                 </div>
                 <input type="range" min="0" max="20000" step="500" value={budgetMax} onChange={handleBudgetChange} className="accent-[#500088]" />
@@ -460,8 +451,8 @@ export default function Marketplace() {
           <div className="w-full max-w-2xl bg-white rounded-[28px] shadow-2xl overflow-hidden">
             <div className="p-6 sm:p-8 border-b border-[rgba(207,194,212,0.2)] flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#855300]">Booking request</p>
-                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl mt-1">Confirm your request</h2>
+                <p className="text-xs font-bold uppercase tracking-wide sm:tracking-widest text-[#855300]">Booking request</p>
+                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-lg sm:text-xl lg:text-2xl mt-1">Confirm your request</h2>
                 <p className="text-sm text-[#4c4452] mt-2">
                   You are requesting {bookingService.title} from {bookingService.provider_name || "this queen"}.
                 </p>
@@ -474,15 +465,15 @@ export default function Marketplace() {
             <div className="p-6 sm:p-8 flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Service</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Service</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{bookingService.title}</p>
                 </div>
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Location</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Location</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{bookingService.location}</p>
                 </div>
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Budget</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Budget</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{formatPriceRange(bookingService.price_min, bookingService.price_max)}</p>
                 </div>
               </div>

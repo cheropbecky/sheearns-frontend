@@ -15,6 +15,7 @@ import {
   Map,
   Smartphone,
 } from "lucide-react";
+import { imageOne, imageFour } from "../assets/localImages";
 
 const steps = [
   {
@@ -144,20 +145,20 @@ export default function Roadmap() {
       <Navbar active="Roadmap" />
 
       <main className="px-6 pb-20">
-        <section className="pt-32 pb-8 min-h-[300px] relative overflow-hidden" data-aos="fade-down">
+        <section className="pt-32 pb-8 h-100 sm:h-125 md:h-140 relative overflow-hidden" data-aos="fade-down">
           <img
-            src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=1400&q=80&auto=format&fit=crop"
+            src={imageOne}
             alt=""
             loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover object-top"
+            className="absolute inset-0 w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(80,0,136,0.82)] to-[rgba(80,0,136,0.65)]" />
-          <div className="relative z-10 max-w-[896px] mx-auto text-center max-w-2xl">
-            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-5xl leading-tight inline-flex items-center gap-3 justify-center">
+          <div className="absolute inset-0 bg-linear-to-b from-[rgba(80,0,136,0.60)] to-[rgba(80,0,136,0.40)]" />
+          <div className="relative z-10 max-w-4xl mx-auto text-center">
+            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-4xl sm:text-5xl leading-tight inline-flex items-center gap-3 justify-center">
               <Map size={42} strokeWidth={1.8} />
               Your First Client Is Closer Than You Think
             </h1>
-            <p className="text-white text-xl mt-4 leading-relaxed">
+            <p className="text-white text-sm md:text-base mt-4 leading-normal sm:leading-relaxed">
               Follow this proven day-by-day roadmap. Every queen who has landed
               her first client followed these exact steps.
             </p>
@@ -167,7 +168,7 @@ export default function Roadmap() {
         <div className="my-4" />
 
         <section className="py-16" data-aos="fade-up">
-          <div className="max-w-[848px] mx-auto relative">
+          <div className="max-w-212 mx-auto relative">
             <div className="flex justify-center mb-10" data-aos="zoom-in">
               <div className="bg-[rgba(80,0,136,0.08)] text-[#500088] font-bold text-sm px-6 py-3 rounded-full border border-[rgba(80,0,136,0.2)] inline-flex items-center gap-2">
                 <Award size={16} /> Your Journey Starts Here
@@ -184,7 +185,7 @@ export default function Roadmap() {
                 const copiedKey = `step-${index}`;
                 return (
                   <div key={step.title} className="relative" data-aos={isLeft ? "fade-right" : "fade-left"} data-aos-delay={index * 100}>
-                    <div className="absolute left-1/2 top-8 -translate-x-1/2 w-12 h-12 rounded-full bg-[#500088] text-white font-bold text-lg flex items-center justify-center shadow-lg z-10 border-4 border-[#fdf9f3]">
+                    <div className="absolute left-1/2 top-8 -translate-x-1/2 w-12 h-12 rounded-full bg-[#500088] text-white font-bold text-sm md:text-base flex items-center justify-center shadow-lg z-10 border-4 border-[#fdf9f3]">
                       {index + 1}
                     </div>
 
@@ -197,16 +198,16 @@ export default function Roadmap() {
                         <div className={`w-12 h-12 rounded-2xl ${step.iconBg} flex items-center justify-center`}>
                           <Icon size={22} className="text-white" />
                         </div>
-                        <span className="text-[#855300] text-xs font-bold uppercase tracking-widest bg-[rgba(133,83,0,0.1)] px-3 py-1 rounded-full">
+                        <span className="text-[#855300] text-xs font-bold uppercase tracking-wide sm:tracking-widest bg-[rgba(133,83,0,0.1)] px-3 py-1 rounded-full">
                           {step.day}
                         </span>
                       </div>
 
-                      <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-xl leading-snug mb-3">
+                      <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-xl leading-tight sm:leading-snug mb-3">
                         {step.title}
                       </h3>
 
-                      <p className="text-[#4c4452] text-sm leading-relaxed mb-5">{step.desc}</p>
+                      <p className="text-[#4c4452] text-sm leading-normal sm:leading-relaxed mb-5">{step.desc}</p>
 
                       <button
                         type="button"
@@ -229,7 +230,7 @@ export default function Roadmap() {
                               copyToClipboard(copiedKey, step.template);
                             }
                           }}
-                          className="mt-4 bg-[rgba(80,0,136,0.05)] border border-[rgba(80,0,136,0.1)] rounded-2xl p-4 text-sm text-[#500088] font-medium leading-relaxed italic cursor-copy"
+                          className="mt-4 bg-[rgba(80,0,136,0.05)] border border-[rgba(80,0,136,0.1)] rounded-2xl p-4 text-sm text-[#500088] font-medium leading-normal sm:leading-relaxed italic cursor-copy"
                         >
                           {step.template}
                         </div>
@@ -245,7 +246,7 @@ export default function Roadmap() {
             </div>
 
             <div className="mt-10 flex flex-col items-center" data-aos="zoom-in">
-              <div className="bg-gradient-to-r from-[#fea619] to-[#f59e0b] text-[#684000] font-extrabold text-xl px-8 py-5 rounded-3xl shadow-xl inline-flex items-center gap-3">
+              <div className="bg-linear-to-r from-[#fea619] to-[#f59e0b] text-[#684000] font-extrabold text-xl px-8 py-5 rounded-3xl shadow-xl inline-flex items-center gap-3">
                 <Award size={28} /> FIRST CLIENT UNLOCKED!
               </div>
               <p className="text-[#4c4452] text-sm text-center mt-2">
@@ -258,9 +259,9 @@ export default function Roadmap() {
         <div className="my-4" />
 
         <section className="py-16" data-aos="fade-up">
-          <div className="max-w-[896px] mx-auto">
+          <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-2xl">
+              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">
                 Ready-to-Use Templates
               </h2>
               <div className="flex-1 h-px bg-[rgba(207,194,212,0.4)]" />
@@ -298,7 +299,7 @@ export default function Roadmap() {
                     </div>
 
                     <h3 className="font-bold text-[#1c1c18] text-base mb-2">{item.title}</h3>
-                    <p className="text-[#4c4452] text-sm leading-relaxed italic line-clamp-3">
+                    <p className="text-[#4c4452] text-sm leading-normal sm:leading-relaxed italic line-clamp-3">
                       {item.text}
                     </p>
                   </article>
@@ -311,29 +312,29 @@ export default function Roadmap() {
         <div className="my-4" />
 
         <section className="py-16" data-aos="fade-up">
-          <div className="max-w-[896px] mx-auto">
+          <div className="max-w-4xl mx-auto">
             <div
-              className="w-full rounded-3xl relative overflow-hidden p-10"
+              className="w-full rounded-3xl relative overflow-hidden h-90 sm:h-110 md:h-130 p-10 flex items-center"
               style={{ background: "linear-gradient(135deg, #500088, #940058)" }}
             >
               <img
-                src="https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=1200&q=60&auto=format&fit=crop"
+                src={imageFour}
                 alt=""
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.15]"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[rgba(80,0,136,0.86)] to-[rgba(148,0,88,0.82)]" />
+              <div className="absolute inset-0 bg-linear-to-r from-[rgba(80,0,136,0.60)] to-[rgba(148,0,88,0.55)]" />
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-[rgba(254,166,25,0.15)] blur-2xl" />
 
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div className="flex flex-col">
-                  <span className="self-start bg-[rgba(254,166,25,0.2)] text-[#fea619] text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                  <span className="self-start bg-[rgba(254,166,25,0.2)] text-[#fea619] text-xs font-bold uppercase tracking-wide sm:tracking-widest px-3 py-1.5 rounded-full">
                     AI Coach Available 24/7
                   </span>
-                  <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-white text-3xl mt-3">
+                  <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-white text-xl sm:text-2xl lg:text-3xl mt-3">
                     Stuck on a step?
                   </h3>
-                  <p className="text-[#d7a8ff] text-lg mt-2 leading-relaxed">
+                  <p className="text-[#d7a8ff] text-sm md:text-base mt-2 leading-normal sm:leading-relaxed">
                     Your AI Business Sister is online 24/7 to help you refine your
                     offer, write captions, or practice your pitch.
                   </p>

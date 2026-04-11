@@ -43,6 +43,7 @@ export default function Settings() {
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [location, setLocation] = useState(user?.location || "");
+  const [monthlyGoal, setMonthlyGoal] = useState(user?.monthlyGoal || 5000);
   const [notifications, setNotifications] = useState(user?.notificationsEnabled ?? true);
   const [marketing, setMarketing] = useState(user?.marketingEmailsEnabled ?? false);
   const [weeklySummary, setWeeklySummary] = useState(user?.weeklySummaryEnabled ?? true);
@@ -80,6 +81,7 @@ export default function Settings() {
         setEmail(payload?.email || "");
         setPhone(payload?.phone || "");
         setLocation(payload?.location || "");
+        setMonthlyGoal(payload?.monthly_goal || user?.monthlyGoal || 5000);
         setNotifications(payload?.notifications_enabled ?? true);
         setMarketing(payload?.marketing_emails_enabled ?? false);
 
@@ -89,6 +91,7 @@ export default function Settings() {
           email: payload?.email || user?.email || "",
           phone: payload?.phone || user?.phone || "",
           location: payload?.location || user?.location || "",
+          monthlyGoal: payload?.monthly_goal || user?.monthlyGoal || 5000,
           avatar: payload?.avatar_url || user?.avatar || null,
           services: payload?.services || user?.services || [],
           notificationsEnabled: payload?.notifications_enabled ?? true,
@@ -113,6 +116,12 @@ export default function Settings() {
   }, [isLoggedIn]);
 
   const handleSaveSettings = async () => {
+    const parsedMonthlyGoal = Number(monthlyGoal);
+    if (!Number.isFinite(parsedMonthlyGoal) || parsedMonthlyGoal < 1000 || parsedMonthlyGoal > 1000000) {
+      setNotice("Set a monthly goal between 1,000 and 1,000,000 KES.");
+      return;
+    }
+
     setSavingSettings(true);
     setNotice("");
 
@@ -124,10 +133,16 @@ export default function Settings() {
           email: email.trim(),
           phone: phone.trim() || null,
           location: location.trim() || null,
+          monthly_goal: parsedMonthlyGoal,
           notifications_enabled: notifications,
           marketing_emails_enabled: marketing,
         }),
       });
+
+      const backendMonthlyGoal = Number(payload?.monthly_goal);
+      const backendMatchesGoal = Number.isFinite(backendMonthlyGoal) && backendMonthlyGoal === parsedMonthlyGoal;
+      const resolvedMonthlyGoal =
+        backendMatchesGoal ? backendMonthlyGoal : parsedMonthlyGoal;
 
       updateUser({
         id: payload?.id || user?.id || null,
@@ -135,6 +150,7 @@ export default function Settings() {
         email: payload?.email || email.trim(),
         phone: payload?.phone || phone.trim(),
         location: payload?.location || location.trim(),
+        monthlyGoal: resolvedMonthlyGoal,
         avatar: payload?.avatar_url || user?.avatar || null,
         services: payload?.services || user?.services || [],
         notificationsEnabled: payload?.notifications_enabled ?? notifications,
@@ -149,7 +165,11 @@ export default function Settings() {
       });
 
       setSaved(true);
-      setNotice("Settings updated.");
+      setNotice(
+        backendMatchesGoal
+          ? "Settings updated."
+          : "Settings updated. Monthly goal is saved locally until backend migration is applied."
+      );
     } catch (err) {
       setNotice(err?.message || "Could not save settings right now.");
     } finally {
@@ -202,7 +222,7 @@ export default function Settings() {
         <Navbar active="How It Works" />
         <main className="pt-28 px-6 pb-20">
           <div className="max-w-xl mx-auto bg-white rounded-3xl p-8 text-center">
-            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-3xl font-extrabold text-[#500088]">Settings</h1>
+            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#500088]">Settings</h1>
             <p className="text-[#4c4452] mt-3">Please log in to manage your settings.</p>
             <a href="/login" className="inline-block mt-6 bg-[#500088] text-white px-5 py-3 rounded-2xl font-bold no-underline">Go to Login</a>
           </div>
@@ -219,7 +239,7 @@ export default function Settings() {
       <main className="pt-28 px-6 pb-20 flex-1">
         <div className="max-w-3xl mx-auto bg-white rounded-3xl p-8 shadow-sm flex flex-col gap-7">
           <div>
-            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-3xl font-extrabold text-[#1c1c18]">Settings</h1>
+            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#1c1c18]">Settings</h1>
             <p className="text-[#4c4452] mt-2">Manage account details, security, privacy, and preferences.</p>
           </div>
 
@@ -253,6 +273,16 @@ export default function Settings() {
                 onChange={(event) => setLocation(event.target.value)}
                 className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
                 placeholder="Location"
+              />
+              <input
+                type="number"
+                min="1000"
+                max="1000000"
+                step="500"
+                value={monthlyGoal}
+                onChange={(event) => setMonthlyGoal(event.target.value)}
+                className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
+                placeholder="Monthly goal (KES)"
               />
             </div>
           </section>

@@ -1,3 +1,5 @@
+import { avatarPool } from "../assets/localImages";
+
 export const queens = [
   {
     name: "Zawadi M.",
@@ -7,7 +9,7 @@ export const queens = [
     rating: 4.9,
     reviews: 23,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[0],
     bio: "Zawadi helps busy professionals keep polished nails with durable gel and artistic custom sets. She focuses on clean prep, healthy nail care, and modern designs.",
   },
   {
@@ -18,7 +20,7 @@ export const queens = [
     rating: 5.0,
     reviews: 47,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[1],
     bio: "Amina specializes in knotless braids, feed-ins, and protective styles. She is known for neat sectioning, quick turnaround, and client-friendly bookings.",
   },
   {
@@ -29,7 +31,7 @@ export const queens = [
     rating: 4.8,
     reviews: 31,
     verified: false,
-    avatar: "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[2],
     bio: "Brenda designs logos, social media kits, and posters for small businesses. Her work combines bold visuals with practical brand strategy.",
   },
   {
@@ -40,7 +42,7 @@ export const queens = [
     rating: 4.7,
     reviews: 18,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[3],
     bio: "Faith creates healthy weekly meal plans for families and professionals. She offers customizable menus for fitness, wellness, and budget goals.",
   },
   {
@@ -51,7 +53,7 @@ export const queens = [
     rating: 4.9,
     reviews: 56,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[4],
     bio: "Sandra shoots portraits, events, and business content with clean edits and fast delivery. She helps brands and individuals stand out online.",
   },
   {
@@ -62,7 +64,7 @@ export const queens = [
     rating: 5.0,
     reviews: 29,
     verified: false,
-    avatar: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[5],
     bio: "Cynthia supports KCSE and CBC learners with practical step-by-step lessons. She focuses on confidence building and measurable score improvement.",
   },
   {
@@ -73,7 +75,7 @@ export const queens = [
     rating: 4.8,
     reviews: 21,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[0],
     bio: "Maya offers bridal, soft glam, and photoshoot makeup. Her sessions include skin prep and product guidance for long wear.",
   },
   {
@@ -84,7 +86,7 @@ export const queens = [
     rating: 4.6,
     reviews: 17,
     verified: false,
-    avatar: "https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[1],
     bio: "Joy writes SEO blog posts, product descriptions, and social captions. She helps local businesses convert readers into clients.",
   },
   {
@@ -95,7 +97,7 @@ export const queens = [
     rating: 4.9,
     reviews: 34,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[2],
     bio: "Winnie manages posting calendars, reels, and DM funnels for creators and small brands across Instagram and TikTok.",
   },
   {
@@ -106,7 +108,7 @@ export const queens = [
     rating: 4.7,
     reviews: 20,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[3],
     bio: "Njeri makes custom outfits and alterations with quick fittings and clean finishes, specializing in modern African-inspired cuts.",
   },
   {
@@ -117,7 +119,7 @@ export const queens = [
     rating: 4.8,
     reviews: 26,
     verified: false,
-    avatar: "https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[4],
     bio: "Lavender handles inboxes, scheduling, and admin systems for founders. She helps clients save time and improve consistency.",
   },
   {
@@ -128,7 +130,7 @@ export const queens = [
     rating: 4.9,
     reviews: 39,
     verified: true,
-    avatar: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=200&q=80&auto=format&fit=crop",
+    avatar: avatarPool[5],
     bio: "Shiko offers beginner-friendly coaching for fat-loss, mobility, and strength. She runs personalized plans with WhatsApp check-ins.",
   },
 ];

@@ -29,7 +29,9 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../api";
+import { imageTwo, imageSix, logo } from "../assets/localImages";
 
 const skills = [
   { label: "Hair & Beauty", Icon: Scissors },
@@ -105,30 +107,30 @@ export default function Onboarding() {
     <div className="min-h-screen bg-[#fdf9f3] font-['Inter',sans-serif] flex flex-col">
       <Navbar active="How It Works" />
 
-      <main className={`flex-1 flex items-center justify-center px-4 py-12 pt-28 ${step === 1 ? "relative overflow-hidden" : ""}`}>
+      <main className={`flex-1 flex items-center justify-center px-4 py-12 pt-28 ${step === 1 ? "relative overflow-hidden h-100 sm:h-125 md:h-screen" : ""}`}>
         {step === 1 && (
           <>
             <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80&auto=format&fit=crop"
+              src={imageTwo}
               alt=""
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-[rgba(80,0,136,0.88)] to-[rgba(148,0,88,0.80)]" />
+            <div className="absolute inset-0 bg-linear-to-br from-[rgba(80,0,136,0.60)] to-[rgba(148,0,88,0.50)]" />
           </>
         )}
         {step === 1 && (
           <div className="relative z-10 flex flex-col items-center gap-8 max-w-md text-center" data-aos="fade-up">
-            <div className="w-40 h-40 rounded-full bg-white border border-[rgba(133,83,0,0.1)] flex items-center justify-center shadow-xl">
-              <Medal size={62} strokeWidth={1.4} className="text-[#500088]" />
+            <div className="w-40 h-40 rounded-full bg-white border border-[rgba(133,83,0,0.1)] flex items-center justify-center shadow-xl overflow-hidden">
+              <img src={logo} alt="SheEarns Logo" className="w-full h-full object-cover" />
             </div>
-            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-5xl">
+            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-4xl sm:text-5xl">
               Welcome to SheEarns
             </h1>
-            <p className="text-white text-xl">Find your best hustle path in two minutes.</p>
+            <p className="text-white text-sm md:text-base">Find your best hustle path in two minutes.</p>
             <button
               onClick={() => setStep(2)}
-              className="w-full inline-flex items-center justify-center gap-3 text-white font-bold text-lg px-8 py-5 rounded-2xl shadow-lg hover:opacity-90 transition-opacity bg-[#500088]"
+              className="w-full inline-flex items-center justify-center gap-3 text-white font-bold text-sm md:text-base px-8 py-5 rounded-2xl shadow-lg hover:opacity-90 transition-opacity bg-[#500088]"
             >
               Start <ArrowRight size={18} strokeWidth={1.8} />
             </button>
@@ -139,7 +141,7 @@ export default function Onboarding() {
           <div className="w-full max-w-2xl flex flex-col gap-8" data-aos="fade-up">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="text-[#500088] text-sm font-bold uppercase tracking-widest">Step 1 of 2</span>
+                <span className="text-[#500088] text-sm font-bold uppercase tracking-wide sm:tracking-widest">Step 1 of 2</span>
                 <span className="text-[#4c4452] text-xs">50% Complete</span>
               </div>
               <div className="h-2 bg-[#e6e2dc] rounded-full">
@@ -147,7 +149,7 @@ export default function Onboarding() {
               </div>
             </div>
 
-            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-3xl">
+            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-xl sm:text-2xl lg:text-3xl">
               What are you naturally good at?
             </h2>
 
@@ -184,24 +186,24 @@ export default function Onboarding() {
 
         {step === 3 && (
           <div className="w-full max-w-2xl flex flex-col gap-8" data-aos="fade-up">
-            <div className="w-full h-32 rounded-3xl overflow-hidden mb-2 relative">
+            <div className="w-full h-48 sm:h-64 md:h-80 rounded-3xl overflow-hidden mb-2 relative">
               <img
-                src="https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=1000&q=80&auto=format&fit=crop"
+                src={imageSix}
                 alt=""
                 loading="lazy"
                 className="w-full h-full object-cover object-top"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#500088] via-[rgba(80,0,136,0.4)] to-transparent" />
-              <p className="absolute bottom-3 left-5 text-white font-bold text-lg z-10">
+              <div className="absolute inset-0 bg-linear-to-r from-[#500088] via-[rgba(80,0,136,0.2)] to-transparent" />
+              <p className="absolute bottom-3 left-5 text-white font-bold text-sm md:text-base z-10">
                 Your Top Hustles, Queen
               </p>
             </div>
             <div className="flex flex-col items-center gap-4">
               <div className="bg-[#ffddb8] inline-flex items-center gap-2 px-6 py-2 rounded-full">
                 <Target size={16} strokeWidth={1.8} className="text-[#2a1700]" />
-                <span className="text-[#2a1700] text-xs font-bold uppercase tracking-widest">Perfect Matches Found</span>
+                <span className="text-[#2a1700] text-xs font-bold uppercase tracking-wide sm:tracking-widest">Perfect Matches Found</span>
               </div>
-              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-4xl text-center">
+              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl sm:text-3xl lg:text-4xl text-center">
                 Your Top Hustle Ideas
               </h2>
             </div>
@@ -223,10 +225,10 @@ export default function Onboarding() {
                     </div>
                     <div className="flex flex-col gap-1 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase tracking-widest text-[#4c4452]">Top {index + 1}</span>
-                        {index === 0 && <span className="text-[#855300] text-xs font-extrabold uppercase tracking-widest">Top Pick</span>}
+                        <span className="text-xs font-bold uppercase tracking-wide sm:tracking-widest text-[#4c4452]">Top {index + 1}</span>
+                        {index === 0 && <span className="text-[#855300] text-xs font-extrabold uppercase tracking-wide sm:tracking-widest">Top Pick</span>}
                       </div>
-                      <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#1c1c18] text-2xl">{h.name}</h3>
+                      <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">{h.name}</h3>
                       <p className="text-[#4c4452] text-base">{h.earning_potential}</p>
                       <p className="text-[#4c4452] text-sm">Time to first client: {h.time_to_first_client}</p>
                       <p className="inline-flex items-center gap-1 text-sm text-[#500088]">

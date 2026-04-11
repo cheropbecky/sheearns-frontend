@@ -15,8 +15,9 @@ import {
 } from "lucide-react";
 import { apiRequest } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { imageFive, imageOne } from "../assets/localImages";
 
-const fallbackAvatar = "https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&q=80&auto=format&fit=crop";
+const fallbackAvatar = imageFive;
 
 function formatPriceRange(min, max) {
   const safeMin = Number(min || 0);
@@ -288,21 +289,21 @@ export default function QueenProfile({ serviceId }) {
       <main className="pt-28 pb-24">
         <section className="max-w-7xl mx-auto px-6">
           <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-            <div className="relative h-72 w-full overflow-hidden">
+            <div className="relative h-56 sm:h-64 md:h-72 w-full overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1400&q=80&auto=format&fit=crop"
+                src={imageOne}
                 alt=""
                 className="w-full h-full object-cover object-center"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-linear-to-b from-transparent via-[rgba(80,0,136,0.2)] to-[rgba(80,0,136,0.9)]" />
-              <div className="absolute top-5 left-5 bg-[rgba(80,0,136,0.9)] text-white text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
+              <div className="absolute inset-0 bg-linear-to-b from-transparent via-[rgba(80,0,136,0.2)] to-[rgba(80,0,136,0.65)]" />
+              <div className="absolute top-5 left-5 bg-[rgba(80,0,136,0.9)] text-white text-xs font-bold uppercase tracking-wide sm:tracking-widest px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
                 <ShieldCheck size={14} strokeWidth={1.8} /> Verified profile
               </div>
             </div>
             <div className="-mt-16 ml-8 relative z-10">
               <img
-                src={service?.portfolio_urls?.[0] || fallbackAvatar}
+                src={service?.avatar_url || service?.provider_avatar_url || service?.portfolio_urls?.[0] || fallbackAvatar}
                 alt={service?.provider_name || "Provider"}
                 loading="lazy"
                 className="w-32 h-32 rounded-full object-cover object-top border-4 border-white shadow-xl"
@@ -312,7 +313,7 @@ export default function QueenProfile({ serviceId }) {
             <div className="flex flex-col md:flex-row md:items-end gap-6">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-3xl">{service?.provider_name || "SheEarns Queen"}</h2>
+                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl">{service?.provider_name || "SheEarns Queen"}</h2>
                   <BadgeCheck size={20} strokeWidth={1.5} className="text-[#500088]" />
                 </div>
                 <p className="text-[#1c1c18] font-semibold">{service?.title || "Service"}</p>
@@ -329,7 +330,7 @@ export default function QueenProfile({ serviceId }) {
                     { label: "Trust signal", value: `${service?.review_count || 0} reviews from clients` },
                   ].map((item) => (
                     <div key={item.label} className="bg-[#f7f3ed] rounded-2xl p-3">
-                      <p className="text-[11px] uppercase tracking-widest text-[#4c4452] font-bold">{item.label}</p>
+                      <p className="text-[11px] uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">{item.label}</p>
                       <p className="text-sm text-[#1c1c18] font-semibold mt-1">{item.value}</p>
                     </div>
                   ))}
@@ -366,12 +367,12 @@ export default function QueenProfile({ serviceId }) {
         <section className="max-w-7xl mx-auto px-6 mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-3xl shadow-sm p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-2xl mb-4">About</h3>
-              <p className="text-[#4c4452] leading-relaxed">{service?.description || "No description yet."}</p>
+              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-lg sm:text-xl lg:text-2xl mb-4">About</h3>
+              <p className="text-[#4c4452] leading-normal sm:leading-relaxed">{service?.description || "No description yet."}</p>
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-2xl mb-4">Services Offered</h3>
+              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-lg sm:text-xl lg:text-2xl mb-4">Services Offered</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 {providerServices.map((item) => (
                   <div key={item.id} className={`rounded-2xl p-4 border ${item.id === service?.id ? "bg-[rgba(80,0,136,0.08)] border-[#500088]" : "bg-[#f7f3ed] border-transparent"}`}>
@@ -389,18 +390,18 @@ export default function QueenProfile({ serviceId }) {
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-2xl mb-4 inline-flex items-center gap-2">
+              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-lg sm:text-xl lg:text-2xl mb-4 inline-flex items-center gap-2">
                 <Camera size={22} strokeWidth={1.5} /> Portfolio
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 {(service?.portfolio_urls?.length ? service.portfolio_urls : [fallbackAvatar]).map((img) => (
-                  <img key={img} src={img} alt="Service portfolio work" loading="lazy" className="w-full h-40 rounded-2xl object-cover object-center" />
+                  <img key={img} src={img} alt="Service portfolio work" loading="lazy" className="w-full h-32 sm:h-40 md:h-48 rounded-2xl object-cover object-center" />
                 ))}
               </div>
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-2xl mb-4">Reviews</h3>
+              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-lg sm:text-xl lg:text-2xl mb-4">Reviews</h3>
               <div className="space-y-4">
                 {reviews.length === 0 && <p className="text-[#4c4452] text-sm">No reviews yet for this service.</p>}
                 {reviews.map((review) => (
@@ -479,7 +480,7 @@ export default function QueenProfile({ serviceId }) {
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-2xl mb-4">Leave a Review</h3>
+              <h3 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-lg sm:text-xl lg:text-2xl mb-4">Leave a Review</h3>
               <p className="text-[#4c4452] text-sm mb-4">Share your experience so other clients can book with confidence.</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -563,8 +564,8 @@ export default function QueenProfile({ serviceId }) {
           <div className="w-full max-w-2xl bg-white rounded-[28px] shadow-2xl overflow-hidden">
             <div className="p-6 sm:p-8 border-b border-[rgba(207,194,212,0.2)] flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#855300]">Booking sent</p>
-                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl mt-1">Your request is in the queue</h2>
+                <p className="text-xs font-bold uppercase tracking-wide sm:tracking-widest text-[#855300]">Booking sent</p>
+                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-lg sm:text-xl lg:text-2xl mt-1">Your request is in the queue</h2>
                 <p className="text-sm text-[#4c4452] mt-2">
                   {bookingConfirmation.providerName || "This queen"} can review your request and get back to you.
                 </p>
@@ -577,15 +578,15 @@ export default function QueenProfile({ serviceId }) {
             <div className="p-6 sm:p-8 flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Service</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Service</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{bookingConfirmation.serviceTitle}</p>
                 </div>
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Estimated amount</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Estimated amount</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">Ksh {Number(bookingConfirmation.amount || 0).toLocaleString()}</p>
                 </div>
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Status</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Status</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1 inline-flex items-center gap-2"><CheckCircle2 size={15} className="text-green-600" /> Pending review</p>
                 </div>
               </div>
@@ -609,8 +610,8 @@ export default function QueenProfile({ serviceId }) {
           <div className="w-full max-w-2xl bg-white rounded-[28px] shadow-2xl overflow-hidden">
             <div className="p-6 sm:p-8 border-b border-[rgba(207,194,212,0.2)] flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#855300]">Booking request</p>
-                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl mt-1">Confirm your request</h2>
+                <p className="text-xs font-bold uppercase tracking-wide sm:tracking-widest text-[#855300]">Booking request</p>
+                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-lg sm:text-xl lg:text-2xl mt-1">Confirm your request</h2>
                 <p className="text-sm text-[#4c4452] mt-2">
                   You are requesting {bookingService.title} from {bookingService.provider_name || "this queen"}.
                 </p>
@@ -623,15 +624,15 @@ export default function QueenProfile({ serviceId }) {
             <div className="p-6 sm:p-8 flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Service</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Service</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{bookingService.title}</p>
                 </div>
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Location</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Location</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{bookingService.location}</p>
                 </div>
                 <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Budget</p>
+                  <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Budget</p>
                   <p className="text-sm font-bold text-[#1c1c18] mt-1">{formatPriceRange(bookingService.price_min, bookingService.price_max)}</p>
                 </div>
               </div>

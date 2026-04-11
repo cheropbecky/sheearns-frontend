@@ -13,6 +13,7 @@ import {
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { apiRequest } from "../api";
+import { imageFour, imageTwo } from "../assets/localImages";
 
 const suggestions = [
   "What should I charge for braiding in Nairobi?",
@@ -79,29 +80,29 @@ export default function AICoach() {
     <div className="min-h-screen bg-[#fdf9f3] font-['Inter',sans-serif] flex flex-col">
       <Navbar active="AI Coach" />
 
-      <main className="pt-24 flex-1 flex flex-col lg:flex-row max-w-[1280px] mx-auto w-full px-6 gap-8 py-8">
-        <div className="lg:w-[400px] flex-shrink-0 flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start lg:pt-8" data-aos="fade-right">
+      <main className="pt-24 flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full px-6 gap-8 py-8">
+        <div className="lg:w-100 shrink-0 flex flex-col gap-6 lg:sticky lg:top-32 lg:self-start lg:pt-8" data-aos="fade-right">
           <div className="bg-[rgba(80,0,136,0.08)] self-start flex items-center gap-2 px-3 py-1.5 rounded-full">
             <Brain size={14} strokeWidth={2} className="text-[#500088]" />
-            <span className="text-[#500088] text-xs font-bold uppercase tracking-widest">AI Powered</span>
+            <span className="text-[#500088] text-xs font-bold uppercase tracking-wide sm:tracking-widest">AI Powered</span>
           </div>
 
-          <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-4xl leading-tight">
+          <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl sm:text-3xl lg:text-4xl leading-tight">
             Your Personal Business Coach, Available 24/7
           </h1>
 
-          <p className="text-[#4c4452] text-lg leading-relaxed">
+          <p className="text-[#4c4452] text-sm md:text-base leading-normal sm:leading-relaxed">
             Ask about pricing, clients, social media, and difficult customer situations.
           </p>
 
           <div className="relative rounded-3xl overflow-hidden h-56 mt-1">
             <img
-              src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80&auto=format&fit=crop"
+              src={imageTwo}
               alt="African woman entrepreneur"
               className="w-full h-full object-cover object-top"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#500088] via-[rgba(80,0,136,0.3)] to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#500088] via-[rgba(80,0,136,0.15)] to-transparent" />
             <div className="absolute bottom-4 left-4 z-10">
               <p className="text-white font-bold text-sm">Available 24/7 for you</p>
               <p className="text-[#d7a8ff] text-xs">Ask me anything about your hustle</p>
@@ -129,7 +130,7 @@ export default function AICoach() {
           <div className="flex items-center gap-3 px-6 py-4 border-b border-[#f1ede7]">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80&auto=format&fit=crop"
+                src={imageFour}
                 alt="AI Coach"
                 className="w-12 h-12 rounded-full object-cover object-top border-2 border-[#fea619]"
                 loading="lazy"
@@ -161,11 +162,11 @@ export default function AICoach() {
 
             {messages.map((msg, i) => (
               <div key={i} className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-                <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${msg.role === "ai" ? "bg-[#500088] text-white" : "bg-[#fea619] text-[#684000]"}`}>
+                <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${msg.role === "ai" ? "bg-[#500088] text-white" : "bg-[#fea619] text-[#684000]"}`}>
                   {msg.role === "ai" ? <Bot size={15} strokeWidth={2} /> : <UserRound size={15} strokeWidth={2} />}
                 </div>
 
-                <div className={`max-w-[75%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${msg.role === "ai" ? "bg-[rgba(80,0,136,0.05)] text-[#500088] rounded-bl-2xl rounded-br-2xl rounded-tr-2xl" : "bg-[#500088] text-white rounded-bl-2xl rounded-br-2xl rounded-tl-2xl"}`}>
+                <div className={`max-w-[75%] px-4 py-3 text-sm leading-normal sm:leading-relaxed whitespace-pre-wrap ${msg.role === "ai" ? "bg-[rgba(80,0,136,0.05)] text-[#500088] rounded-bl-2xl rounded-br-2xl rounded-tr-2xl" : "bg-[#500088] text-white rounded-bl-2xl rounded-br-2xl rounded-tl-2xl"}`}>
                   {msg.text}
                 </div>
               </div>
@@ -199,7 +200,7 @@ export default function AICoach() {
               <button
                 onClick={() => sendMessage()}
                 disabled={loading || !input.trim()}
-                className="bg-[#fea619] text-[#684000] w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-[#ffb930] transition-colors disabled:opacity-50 flex-shrink-0"
+                className="bg-[#fea619] text-[#684000] w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-[#ffb930] transition-colors disabled:opacity-50 shrink-0"
               >
                 <Send size={17} strokeWidth={2} />
               </button>

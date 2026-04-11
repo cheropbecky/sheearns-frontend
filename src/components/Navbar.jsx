@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X, LayoutDashboard, User, Settings, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { logo } from "../assets/localImages";
 
 const links = [
   "Home",
@@ -48,7 +49,8 @@ export default function Navbar({ active = "" }) {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="no-underline flex items-center gap-2">
-          <span className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl text-[#500088]">SheEarns</span>
+          <img src={logo} alt="SheEarns Logo" className="w-14 h-14 rounded-full object-cover" />
+          <span className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-lg sm:text-xl lg:text-2xl text-[#500088]">SheEarns</span>
         </a>
 
         <div className="hidden md:flex items-center gap-7">

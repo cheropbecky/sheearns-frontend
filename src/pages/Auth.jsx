@@ -7,13 +7,13 @@ import {
   ShieldCheck,
   Rocket,
   BadgeCheck,
-  Crown,
   UserRound,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../api";
+import { imageOne, imageThree, logo } from "../assets/localImages";
 
 function getPasswordChecks(value) {
   return {
@@ -77,6 +77,7 @@ export function Login({ onNavigate }) {
         name: payload?.user?.full_name || "Queen",
         email: payload?.user?.email || email.trim(),
         token: payload?.access_token || null,
+        monthlyGoal: payload?.user?.monthly_goal || 5000,
         avatar: payload?.user?.avatar_url || null,
         services: payload?.user?.services || [],
         notificationsEnabled: payload?.user?.notifications_enabled ?? true,
@@ -96,25 +97,26 @@ export function Login({ onNavigate }) {
       <div className="min-h-screen pt-24 font-['Inter',sans-serif] flex">
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&q=80&auto=format&fit=crop"
+            src={imageThree}
             alt=""
             loading="eager"
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-top"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(80,0,136,0.65)] to-[rgba(80,0,136,0.95)]" />
+          <div className="absolute inset-0 bg-linear-to-b from-[rgba(80,0,136,0.45)] to-[rgba(80,0,136,0.70)]" />
           <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white opacity-5" />
           <div className="absolute bottom-20 right-10 w-48 h-48 rounded-full bg-white opacity-5" />
-          <span className="absolute top-10 left-10 font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-3xl inline-flex items-center gap-2">
-            SheEarns <Crown size={24} strokeWidth={1.8} />
+          <span className="absolute top-10 left-10 font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-xl sm:text-2xl lg:text-3xl inline-flex items-center gap-2">
+            <img src={logo} alt="SheEarns" className="w-10 h-10 rounded-full object-cover" />
+            SheEarns
           </span>
 
           <div className="absolute bottom-16 left-10 right-10 bg-white/10 backdrop-blur-md rounded-3xl p-8">
-            <span className="bg-[rgba(254,166,25,0.2)] text-[#fea619] text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+            <span className="bg-[rgba(254,166,25,0.2)] text-[#fea619] text-xs font-bold uppercase tracking-wide sm:tracking-widest px-3 py-1 rounded-full">
               Member Story
             </span>
-            <p className="text-white text-xl font-medium italic mt-4 leading-relaxed">
+            <p className="text-white text-xl font-medium italic mt-4 leading-normal sm:leading-relaxed">
               "Success is not only what you accomplish. It is also what you inspire others to do."
             </p>
             <div className="flex items-center gap-3 mt-4">
@@ -131,15 +133,16 @@ export function Login({ onNavigate }) {
 
         <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
           <div className="w-full max-w-md flex flex-col gap-8">
-            <div className="lg:hidden font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl inline-flex items-center gap-2">
-              SheEarns <Crown size={20} strokeWidth={1.8} />
+            <div className="lg:hidden font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-lg sm:text-xl lg:text-2xl inline-flex items-center gap-2">
+              <img src={logo} alt="SheEarns" className="w-8 h-8 rounded-full object-cover" />
+              SheEarns
             </div>
 
             <div>
-              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-4xl leading-tight">
+              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl sm:text-3xl lg:text-4xl leading-tight">
                 Welcome Back
               </h2>
-              <p className="text-[#4c4452] text-lg mt-2">Your business dashboard is waiting.</p>
+              <p className="text-[#4c4452] text-sm md:text-base mt-2">Your business dashboard is waiting.</p>
             </div>
 
             <form onSubmit={handleLogin} className="flex flex-col gap-5">
@@ -177,7 +180,7 @@ export function Login({ onNavigate }) {
                 </div>
               </div>
 
-              <button type="submit" className="w-full text-white font-bold text-lg py-4 rounded-2xl shadow-lg hover:opacity-90 transition-opacity mt-2 bg-[#500088]">
+              <button type="submit" className="w-full text-white font-bold text-sm md:text-base py-4 rounded-2xl shadow-lg hover:opacity-90 transition-opacity mt-2 bg-[#500088]">
                 {submitting ? "Signing In..." : "Sign In"}
               </button>
 
@@ -264,6 +267,7 @@ export function Signup({ onNavigate }) {
         name: payload?.user?.full_name || name.trim(),
         email: payload?.user?.email || email.trim(),
         token: payload?.access_token || null,
+        monthlyGoal: payload?.user?.monthly_goal || 5000,
         avatar: payload?.user?.avatar_url || null,
         services: payload?.user?.services || [],
         notificationsEnabled: payload?.user?.notifications_enabled ?? true,
@@ -283,28 +287,28 @@ export function Signup({ onNavigate }) {
       <div className="min-h-screen pt-24 font-['Inter',sans-serif] flex">
         <div className="hidden lg:flex lg:w-3/5 relative overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1200&q=80&auto=format&fit=crop"
+            src={imageOne}
             alt=""
             loading="eager"
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-top"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(148,0,88,0.70)] to-[rgba(80,0,136,0.90)]" />
+          <div className="absolute inset-0 bg-linear-to-br from-[rgba(148,0,88,0.50)] to-[rgba(80,0,136,0.65)]" />
           <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white opacity-5 -translate-y-1/4 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-white opacity-5 translate-y-1/4 -translate-x-1/4" />
 
           <div className="absolute inset-0 flex flex-col justify-center px-16 gap-8">
             <div className="bg-[rgba(254,166,25,0.2)] self-start flex items-center gap-2 px-4 py-2 rounded-full">
               <BadgeCheck size={15} strokeWidth={2} className="text-[#fea619]" />
-              <span className="text-[#fea619] text-xs font-bold uppercase tracking-widest">Join the Movement</span>
+              <span className="text-[#fea619] text-xs font-bold uppercase tracking-wide sm:tracking-widest">Join the Movement</span>
             </div>
 
-            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-5xl leading-tight">
+            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-4xl sm:text-5xl lg:text-5xl leading-tight">
               Build Your Crown
             </h2>
 
-            <p className="text-[#d7a8ff] text-xl leading-relaxed max-w-md">
+            <p className="text-[#d7a8ff] text-xl leading-normal sm:leading-relaxed max-w-md">
               Join thousands of women turning skills into shillings. Your next chapter starts now.
             </p>
 
@@ -321,12 +325,13 @@ export function Signup({ onNavigate }) {
 
         <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white overflow-y-auto">
           <div className="w-full max-w-sm flex flex-col gap-7">
-            <div className="lg:hidden font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl inline-flex items-center gap-2">
-              SheEarns <Crown size={20} strokeWidth={1.8} />
+            <div className="lg:hidden font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-lg sm:text-xl lg:text-2xl inline-flex items-center gap-2">
+              <img src={logo} alt="SheEarns" className="w-8 h-8 rounded-full object-cover" />
+              SheEarns
             </div>
 
             <div>
-              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-3xl leading-tight inline-flex items-center gap-2">
+              <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-xl sm:text-2xl lg:text-3xl leading-tight inline-flex items-center gap-2">
                 Start Your Journey <Rocket size={26} strokeWidth={1.8} />
               </h2>
               <p className="text-[#4c4452] text-base mt-1">Create your free SheEarns account</p>

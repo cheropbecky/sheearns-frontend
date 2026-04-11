@@ -15,6 +15,50 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../api";
+import { imageTwo } from "../assets/localImages";
+
+const DAILY_MOTIVATIONS = [
+  {
+    quote: "Small steps done consistently can build a business that changes your life.",
+    note: "Show up for one clear action today, then stack the next tomorrow.",
+  },
+  {
+    quote: "Progress beats perfection, especially when clients are waiting for your courage.",
+    note: "Post your offer, reply faster, and let momentum do the heavy lifting.",
+  },
+  {
+    quote: "The more visible you become, the easier it is for opportunity to find you.",
+    note: "Share one proof-of-work today: a result, testimonial, or before/after.",
+  },
+  {
+    quote: "Your price is not just money. It is your skill, time, and confidence.",
+    note: "Protect your value by pricing clearly and communicating outcomes.",
+  },
+  {
+    quote: "Every repeat client started as a first client who felt taken care of.",
+    note: "Follow up kindly after each booking and invite one referral.",
+  },
+  {
+    quote: "You do not need a perfect plan to start. You need a clear next move.",
+    note: "Pick one growth task and finish it before you open social media.",
+  },
+  {
+    quote: "Consistency makes you unforgettable in a crowded marketplace.",
+    note: "Update your profile and services regularly so clients trust you instantly.",
+  },
+];
+
+function getDailyMotivation() {
+  const today = new Date();
+  const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  let hash = 0;
+
+  for (const char of dateKey) {
+    hash = (hash * 31 + char.charCodeAt(0)) % DAILY_MOTIVATIONS.length;
+  }
+
+  return DAILY_MOTIVATIONS[hash];
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -51,12 +95,13 @@ export default function Dashboard() {
     };
   }, []);
 
-  const summary = dashboard?.summary || { monthly_goal: 10000, earned: 0, remaining: 10000, progress_percent: 0 };
+  const summary = dashboard?.summary || { monthly_goal: 5000, earned: 0, remaining: 5000, progress_percent: 0 };
   const milestones = dashboard?.milestones || [];
   const activities = dashboard?.recent_activity || [];
-  const goal = Number(summary.monthly_goal || 10000);
+  const goal = Number(user?.monthlyGoal || summary.monthly_goal || 5000);
   const earned = Number(summary.earned || 0);
-  const progress = Number(summary.progress_percent || 0);
+  const remaining = Math.max(goal - earned, 0);
+  const progress = goal > 0 ? Math.min((earned / goal) * 100, 100) : 0;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -79,6 +124,7 @@ export default function Dashboard() {
       : greeting.label === "Good afternoon"
         ? "Keep the momentum going."
         : "You did well today. Rest and recharge.";
+  const dailyMotivation = getDailyMotivation();
 
   const navigateTo = (path) => {
     window.history.pushState({}, "", path);
@@ -182,10 +228,10 @@ export default function Dashboard() {
           <div className="max-w-7xl mx-auto flex flex-col gap-8">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4" data-aos="fade-down">
               <div>
-                <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-4xl">
+                <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl sm:text-3xl lg:text-4xl">
                   {greeting.label}, {firstName} {greeting.emoji}
                 </h1>
-                <p className="text-[#4c4452] text-lg mt-1">{encouragement}</p>
+                <p className="text-[#4c4452] text-sm md:text-base mt-1">{encouragement}</p>
               </div>
               <div className="bg-white border border-[rgba(207,194,212,0.3)] rounded-2xl flex items-center gap-3 px-5 py-3 shadow-sm">
                 <div className="bg-[#fea619] w-10 h-10 rounded-xl flex items-center justify-center">
@@ -204,7 +250,7 @@ export default function Dashboard() {
                   <Wallet className="absolute top-5 right-5 text-[rgba(80,0,136,0.08)]" size={80} strokeWidth={1.2} />
                   <div className="flex items-start justify-between mb-6">
                     <div>
-                      <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-2xl">Income Tracker</h2>
+                      <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">Income Tracker</h2>
                       <p className="text-[#4c4452] text-sm mt-1">April Goal: Ksh {goal.toLocaleString()}</p>
                     </div>
                     <span className="bg-[rgba(80,0,136,0.08)] text-[#500088] text-xs font-bold px-3 py-1.5 rounded-full">This Month</span>
@@ -213,11 +259,11 @@ export default function Dashboard() {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="bg-[#f7f3ed] rounded-2xl p-4">
                       <p className="text-[#4c4452] text-xs font-medium mb-1">Earned So Far</p>
-                      <p className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-3xl">Ksh {earned.toLocaleString()}</p>
+                      <p className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-xl sm:text-2xl lg:text-3xl">Ksh {earned.toLocaleString()}</p>
                     </div>
                     <div className="bg-[#f7f3ed] rounded-2xl p-4">
                       <p className="text-[#4c4452] text-xs font-medium mb-1">Remaining</p>
-                      <p className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-3xl">Ksh {Math.max(goal - earned, 0).toLocaleString()}</p>
+                      <p className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-xl sm:text-2xl lg:text-3xl">Ksh {remaining.toLocaleString()}</p>
                     </div>
                   </div>
 
@@ -235,7 +281,7 @@ export default function Dashboard() {
 
                 <div className="bg-white rounded-3xl p-8 shadow-sm" data-aos="fade-up" data-aos-delay="80">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-2xl">Recent Activity</h2>
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">Recent Activity</h2>
                     <button className="text-[#500088] text-sm font-bold hover:underline">View All</button>
                   </div>
 
@@ -323,23 +369,23 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative rounded-3xl overflow-hidden p-10 mt-6" data-aos="fade-up" data-aos-delay="120">
+            <div className="relative rounded-3xl overflow-hidden h-80 sm:h-95 md:h-110 p-8 sm:p-10 mt-6 flex items-center" data-aos="fade-up" data-aos-delay="120">
               <img
-                src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1400&q=80&auto=format&fit=crop"
+                src={imageTwo}
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover object-center"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-linear-to-r from-[rgba(80,0,136,0.92)] to-[rgba(148,0,88,0.85)]" />
+              <div className="absolute inset-0 bg-linear-to-r from-[rgba(80,0,136,0.68)] to-[rgba(148,0,88,0.60)]" />
               <div className="relative z-10 max-w-lg">
-                <span className="bg-[rgba(254,166,25,0.25)] text-[#fea619] text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                <span className="bg-[rgba(254,166,25,0.25)] text-[#fea619] text-xs font-bold uppercase tracking-wide sm:tracking-widest px-3 py-1 rounded-full">
                   Daily Motivation
                 </span>
-                <p className="text-white font-bold text-2xl mt-3 leading-snug font-['Plus_Jakarta_Sans',sans-serif]">
-                  "The future belongs to those who believe in the beauty of their dreams."
+                <p className="text-white font-bold text-lg sm:text-xl lg:text-2xl mt-3 leading-tight sm:leading-snug font-['Plus_Jakarta_Sans',sans-serif]">
+                  "{dailyMotivation.quote}"
                 </p>
                 <p className="text-[#d7a8ff] text-sm mt-3">
-                  Your profile is getting 20% more views than last week. Keep showing up, Queen!
+                  {dailyMotivation.note}
                 </p>
                 <button
                   onClick={() => handleQuickAction("Update My Services")}
@@ -352,7 +398,7 @@ export default function Dashboard() {
 
             <div className="bg-white rounded-3xl p-8 shadow-sm" data-aos="fade-up" data-aos-delay="140">
               <div className="flex items-center justify-between mb-5 gap-3">
-                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-2xl">Bookings Dashboard</h2>
+                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">Bookings Dashboard</h2>
                 <span className="bg-[rgba(80,0,136,0.08)] text-[#500088] text-xs font-bold px-3 py-1 rounded-full">
                   {providerBookings.length} total
                 </span>

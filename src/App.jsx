@@ -19,7 +19,7 @@ function NotFound() {
     <div className="min-h-screen bg-[#fdf9f3] flex items-center justify-center px-6">
       <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-sm text-center">
         <AlertTriangle className="mx-auto text-[#500088]" size={42} strokeWidth={1.5} />
-        <h1 className="mt-4 font-['Plus_Jakarta_Sans',sans-serif] text-3xl font-extrabold text-[#1c1c18]">Page not found</h1>
+        <h1 className="mt-4 font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#1c1c18]">Page not found</h1>
         <p className="mt-2 text-[#4c4452]">The route you requested does not exist.</p>
         <a
           href="/"

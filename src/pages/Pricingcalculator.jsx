@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { apiRequest } from "../api";
+import { imageTwo, imageThree } from "../assets/localImages";
 import {
   Calculator,
   MapPin,
@@ -157,20 +158,20 @@ export default function PricingCalculator() {
   return (
     <div className="relative overflow-hidden min-h-screen bg-[#fdf9f3] font-['Inter',sans-serif]">
       <img
-        src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1600&q=40&auto=format&fit=crop"
+        src={imageTwo}
         alt=""
         loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-[0.04]"
+        className="absolute inset-0 w-full h-full object-cover object-center"
       />
       <Navbar active="Pricing" isLoggedIn={false} />
 
       <main className="relative z-10 pt-32 pb-24 px-6">
-        <div className="max-w-[1160px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="max-w-290 mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
           <section data-aos="fade-up" className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm">
-            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-4xl text-[#500088] inline-flex items-center gap-3">
+            <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl sm:text-3xl lg:text-4xl text-[#500088] inline-flex items-center gap-3">
               <Calculator size={38} strokeWidth={1.5} /> Pricing Calculator
             </h1>
-            <p className="text-[#4c4452] mt-3 max-w-[680px]">
+            <p className="text-[#4c4452] mt-3 max-w-170">
               Estimate fair pricing for your hustle based on service type, location, session hours, and urgency.
             </p>
 
@@ -240,20 +241,20 @@ export default function PricingCalculator() {
 
           <aside data-aos="fade-left" className="relative rounded-3xl overflow-hidden p-8 shadow-sm flex flex-col gap-6">
             <img
-              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&q=80&auto=format&fit=crop"
+              src={imageThree}
               alt=""
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover object-top"
             />
             <div className="absolute inset-0 bg-[rgba(255,255,255,0.92)]" />
             <div className="relative z-10 flex flex-col gap-6">
-            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl text-[#500088] inline-flex items-center gap-2">
+            <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-lg sm:text-xl lg:text-2xl text-[#500088] inline-flex items-center gap-2">
               <Target size={24} strokeWidth={1.5} /> Your Estimate
             </h2>
 
             <div className="bg-[#f7f3ed] rounded-2xl p-5">
-              <p className="text-xs uppercase tracking-widest text-[#4c4452] font-bold">Recommended Price</p>
-              <p className="text-4xl font-extrabold text-[#500088] mt-2">{currency(displayEstimate)}</p>
+              <p className="text-xs uppercase tracking-wide sm:tracking-widest text-[#4c4452] font-bold">Recommended Price</p>
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#500088] mt-2">{currency(displayEstimate)}</p>
               <p className="text-[#4c4452] mt-2 text-sm">Range: {currency(displayLow)} - {currency(displayHigh)}</p>
             </div>
 
