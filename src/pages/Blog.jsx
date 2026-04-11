@@ -61,7 +61,9 @@ export default function Blog() {
           <img
             src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80&auto=format&fit=crop"
             alt=""
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[rgba(80,0,136,0.80)] to-[rgba(80,0,136,0.60)]" />

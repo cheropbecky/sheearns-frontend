@@ -101,6 +101,7 @@ export default function Navbar({ active = "" }) {
                     </div>
                     {[
                       { icon: LayoutDashboard, label: "My Dashboard", href: "/dashboard" },
+                      { icon: LayoutDashboard, label: "My Bookings", href: "/bookings" },
                       { icon: User, label: "My Profile", href: "/profile" },
                       { icon: Settings, label: "Settings", href: "/settings" },
                     ].map((item) => (
@@ -157,6 +158,7 @@ export default function Navbar({ active = "" }) {
           {isLoggedIn ? (
             <div className="pt-2 border-t border-[rgba(207,194,212,0.2)] flex flex-col gap-2">
               <a href="/dashboard" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Dashboard</a>
+              <a href="/bookings" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Bookings</a>
               <button onClick={logout} className="text-center border border-red-200 py-3 rounded-2xl text-red-500 font-bold">Log Out</button>
             </div>
           ) : (

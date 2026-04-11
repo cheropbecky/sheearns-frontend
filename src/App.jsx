@@ -6,6 +6,7 @@ import PricingCalculator from "./pages/Pricingcalculator";
 import Marketplace from "./pages/Marketplace";
 import AICoach from "./pages/Aicoach";
 import Dashboard from "./pages/Dashboard";
+import Bookings from "./pages/Bookings";
 import Blog from "./pages/Blog";
 import Roadmap from "./pages/Roadmap";
 import QueenProfile from "./pages/QueenProfile";
@@ -78,6 +79,7 @@ export default function App() {
     "/aicoach": <AICoach />,
     "/ai-coach": <AICoach />,
     "/dashboard": <Dashboard />,
+    "/bookings": <Bookings />,
     "/profile": <Profile />,
     "/settings": <Settings />,
     "/roadmap": <Roadmap />,

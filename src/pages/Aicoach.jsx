@@ -116,9 +116,9 @@ export default function AICoach() {
                 { label: "First Clients", Icon: Users },
                 { label: "Social Media", Icon: Megaphone },
                 { label: "Difficult Clients", Icon: ShieldAlert },
-              ].map(({ label, Icon }) => (
-                <span key={label} className="bg-[rgba(80,0,136,0.06)] text-[#500088] text-xs font-bold px-3 py-1.5 rounded-full inline-flex items-center gap-1">
-                  <Icon size={13} strokeWidth={2} /> {label}
+              ].map((item) => (
+                <span key={item.label} className="bg-[rgba(80,0,136,0.06)] text-[#500088] text-xs font-bold px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                  <item.Icon size={13} strokeWidth={2} /> {item.label}
                 </span>
               ))}
             </div>

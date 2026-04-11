@@ -98,7 +98,9 @@ export function Login({ onNavigate }) {
           <img
             src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&q=80&auto=format&fit=crop"
             alt=""
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[rgba(80,0,136,0.65)] to-[rgba(80,0,136,0.95)]" />
@@ -283,7 +285,9 @@ export function Signup({ onNavigate }) {
           <img
             src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1200&q=80&auto=format&fit=crop"
             alt=""
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[rgba(148,0,88,0.70)] to-[rgba(80,0,136,0.90)]" />

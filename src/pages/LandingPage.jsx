@@ -65,7 +65,7 @@ export default function LandingPage() {
             <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-[rgba(133,83,0,0.1)] blur-3xl" />
             <div className="absolute -bottom-8 -right-8 w-48 h-48 rounded-full bg-[rgba(80,0,136,0.05)] blur-3xl" />
             <div className="relative rotate-2 rounded-[32px] overflow-hidden shadow-2xl w-full max-w-[520px]">
-              <img src={imgHero} alt="Young African woman smiling while working on her business" loading="lazy" className="w-full h-full object-cover object-center aspect-[4/5]" />
+              <img src={imgHero} alt="Young African woman smiling while working on her business" loading="eager" fetchPriority="high" decoding="async" className="w-full h-full object-cover object-center aspect-[4/5]" />
               <div className="absolute top-4 right-4 bg-[#fea619] flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-lg">
                 <Star size={14} strokeWidth={1.5} className="text-[#684000] fill-[#684000]" />
                 <span className="text-xs font-bold text-[#684000]">Top Earner</span>

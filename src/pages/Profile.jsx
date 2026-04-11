@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Camera, Plus, Save, Trash2, UserRound } from "lucide-react";
+import { Camera, Plus, Save, Trash2, UserRound, PencilLine, X, ArrowRight, BadgeCheck } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
@@ -44,7 +44,46 @@ export default function Profile() {
   const [listingMinPrice, setListingMinPrice] = useState(1000);
   const [listingMaxPrice, setListingMaxPrice] = useState(3000);
   const [portfolioUrlsText, setPortfolioUrlsText] = useState("");
+  const [myListings, setMyListings] = useState([]);
+  const [listingsLoading, setListingsLoading] = useState(true);
+  const [listingsNotice, setListingsNotice] = useState("");
+  const [editingListingId, setEditingListingId] = useState("");
+  const [editingListingDraft, setEditingListingDraft] = useState(null);
+  const [savingListingId, setSavingListingId] = useState("");
+  const [deletingListingId, setDeletingListingId] = useState("");
   const services = useMemo(() => servicesDraft, [servicesDraft]);
+
+  const loadListings = async () => {
+    setListingsLoading(true);
+    try {
+      const payload = await apiRequest("/services/me");
+      setMyListings(Array.isArray(payload) ? payload : []);
+    } catch (err) {
+      setListingsNotice(err?.message || "Could not load your listings right now.");
+      setMyListings([]);
+    } finally {
+      setListingsLoading(false);
+    }
+  };
+
+  const startEditingListing = (listing) => {
+    setEditingListingId(listing.id);
+    setEditingListingDraft({
+      title: listing.title || "",
+      category: listing.category || "Hair & Beauty",
+      description: listing.description || "",
+      location: listing.location || "Nairobi",
+      price_min: String(listing.price_min ?? 0),
+      price_max: String(listing.price_max ?? 0),
+      portfolio_urls: Array.isArray(listing.portfolio_urls) ? listing.portfolio_urls.join("\n") : "",
+      is_active: listing.is_active ?? true,
+    });
+  };
+
+  const cancelEditingListing = () => {
+    setEditingListingId("");
+    setEditingListingDraft(null);
+  };
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -74,6 +113,7 @@ export default function Profile() {
     }
 
     loadProfile();
+      loadListings();
     return () => {
       cancelled = true;
     };
@@ -187,6 +227,83 @@ export default function Profile() {
       setNotice(err?.message || "Could not publish listing right now.");
     } finally {
       setPublishing(false);
+    }
+  };
+
+  const handleSaveListing = async (listingId) => {
+    if (!editingListingDraft) return;
+
+    if (!editingListingDraft.title.trim() || !editingListingDraft.description.trim() || !editingListingDraft.location.trim()) {
+      setListingsNotice("Please fill title, description, and location before saving.");
+      return;
+    }
+
+    const nextMin = Number(editingListingDraft.price_min);
+    const nextMax = Number(editingListingDraft.price_max);
+
+    if (nextMin <= 0 || nextMax <= 0) {
+      setListingsNotice("Please set valid prices greater than zero.");
+      return;
+    }
+
+    if (nextMin > nextMax) {
+      setListingsNotice("Minimum price cannot be greater than maximum price.");
+      return;
+    }
+
+    setSavingListingId(listingId);
+    setListingsNotice("");
+
+    try {
+      const portfolioUrls = String(editingListingDraft.portfolio_urls || "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+
+      await apiRequest(`/services/${listingId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          title: editingListingDraft.title.trim(),
+          category: editingListingDraft.category,
+          description: editingListingDraft.description.trim(),
+          price_min: nextMin,
+          price_max: nextMax,
+          location: editingListingDraft.location.trim(),
+          portfolio_urls: portfolioUrls,
+          is_active: editingListingDraft.is_active,
+        }),
+      });
+
+      setListingsNotice("Listing updated successfully.");
+      cancelEditingListing();
+      await loadListings();
+    } catch (err) {
+      setListingsNotice(err?.message || "Could not update this listing right now.");
+    } finally {
+      setSavingListingId("");
+      window.setTimeout(() => setListingsNotice(""), 3000);
+    }
+  };
+
+  const handleDeleteListing = async (listingId) => {
+    const confirmDelete = window.confirm("Remove this listing from the marketplace?");
+    if (!confirmDelete) return;
+
+    setDeletingListingId(listingId);
+    setListingsNotice("");
+
+    try {
+      await apiRequest(`/services/${listingId}`, { method: "DELETE" });
+      setListingsNotice("Listing removed from the marketplace.");
+      if (editingListingId === listingId) {
+        cancelEditingListing();
+      }
+      await loadListings();
+    } catch (err) {
+      setListingsNotice(err?.message || "Could not remove this listing right now.");
+    } finally {
+      setDeletingListingId("");
+      window.setTimeout(() => setListingsNotice(""), 3000);
     }
   };
 
@@ -338,6 +455,167 @@ export default function Profile() {
                   {publishing ? "Publishing..." : "Publish to Marketplace"}
                 </button>
               </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-[rgba(207,194,212,0.35)]">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl font-bold text-[#1c1c18] inline-flex items-center gap-2">
+                    <BadgeCheck size={18} className="text-[#500088]" /> My Listings
+                  </h3>
+                  <p className="text-[#4c4452] text-sm mt-1">Manage your marketplace services, pricing, and portfolio from one place.</p>
+                </div>
+                <button onClick={loadListings} className="text-sm font-bold text-[#500088] inline-flex items-center gap-2 self-start sm:self-auto hover:underline">
+                  Refresh listings <ArrowRight size={14} />
+                </button>
+              </div>
+
+              {listingsNotice && <p className="text-sm font-semibold text-[#500088] mb-4">{listingsNotice}</p>}
+
+              {listingsLoading ? (
+                <div className="grid grid-cols-1 gap-4">
+                  {Array.from({ length: 2 }).map((_, index) => (
+                    <div key={index} className="bg-[#f7f3ed] rounded-3xl p-5 animate-pulse">
+                      <div className="h-5 w-1/2 bg-[#e6e2dc] rounded mb-3" />
+                      <div className="h-4 w-2/3 bg-[#e6e2dc] rounded mb-2" />
+                      <div className="h-4 w-1/3 bg-[#e6e2dc] rounded" />
+                    </div>
+                  ))}
+                </div>
+              ) : myListings.length === 0 ? (
+                <div className="bg-[#f7f3ed] rounded-3xl p-6 text-sm text-[#4c4452]">
+                  You do not have any active marketplace listings yet. Publish one above to start selling.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  {myListings.map((listing) => {
+                    const isEditing = editingListingId === listing.id;
+                    return (
+                      <div key={listing.id} className="border border-[rgba(207,194,212,0.35)] rounded-3xl p-5 bg-white shadow-sm">
+                        {!isEditing ? (
+                          <div className="flex flex-col gap-4">
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h4 className="font-bold text-[#1c1c18] text-lg">{listing.title}</h4>
+                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${listing.is_active ? "bg-[rgba(22,163,74,0.12)] text-green-700" : "bg-[rgba(220,38,38,0.12)] text-red-700"}`}>
+                                    {listing.is_active ? "Active" : "Inactive"}
+                                  </span>
+                                </div>
+                                <p className="text-[#500088] text-sm font-semibold mt-1">{listing.category}</p>
+                                <p className="text-[#4c4452] text-sm mt-1">{listing.location}</p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <p className="font-bold text-[#500088]">{Number(listing.price_min || 0).toLocaleString()} - {Number(listing.price_max || 0).toLocaleString()}</p>
+                                <p className="text-xs text-[#4c4452]">Ksh pricing range</p>
+                              </div>
+                            </div>
+
+                            <p className="text-sm text-[#4c4452] leading-relaxed">{listing.description}</p>
+
+                            <div className="flex flex-wrap gap-3">
+                              <button onClick={() => startEditingListing(listing)} className="inline-flex items-center gap-2 border border-[#cfc2d4] text-[#1c1c18] px-4 py-2.5 rounded-xl text-sm font-bold hover:border-[#500088] transition-colors">
+                                <PencilLine size={16} /> Edit listing
+                              </button>
+                              <button onClick={() => handleDeleteListing(listing.id)} disabled={deletingListingId === listing.id} className="inline-flex items-center gap-2 bg-[#1c1c18] text-white px-4 py-2.5 rounded-xl text-sm font-bold disabled:opacity-70">
+                                <Trash2 size={16} /> {deletingListingId === listing.id ? "Removing..." : "Remove"}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <h4 className="font-bold text-[#1c1c18] text-lg">Editing listing</h4>
+                              <button onClick={cancelEditingListing} className="text-[#4c4452] hover:text-[#500088] inline-flex items-center gap-1 text-sm font-bold">
+                                <X size={16} /> Cancel
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <input
+                                value={editingListingDraft.title}
+                                onChange={(event) => setEditingListingDraft((current) => ({ ...current, title: event.target.value }))}
+                                className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
+                                placeholder="Service title"
+                              />
+                              <select
+                                value={editingListingDraft.category}
+                                onChange={(event) => setEditingListingDraft((current) => ({ ...current, category: event.target.value }))}
+                                className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
+                              >
+                                {marketplaceCategories.map((category) => (
+                                  <option key={category} value={category}>{category}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <textarea
+                              value={editingListingDraft.description}
+                              onChange={(event) => setEditingListingDraft((current) => ({ ...current, description: event.target.value }))}
+                              className="w-full bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none min-h-24"
+                              placeholder="Describe the service"
+                            />
+
+                            <textarea
+                              value={editingListingDraft.portfolio_urls}
+                              onChange={(event) => setEditingListingDraft((current) => ({ ...current, portfolio_urls: event.target.value }))}
+                              className="w-full bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none min-h-20"
+                              placeholder="Portfolio URLs, one per line"
+                            />
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <input
+                                value={editingListingDraft.location}
+                                onChange={(event) => setEditingListingDraft((current) => ({ ...current, location: event.target.value }))}
+                                className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
+                                placeholder="Location"
+                              />
+                              <input
+                                type="number"
+                                min="0"
+                                value={editingListingDraft.price_min}
+                                onChange={(event) => setEditingListingDraft((current) => ({ ...current, price_min: event.target.value }))}
+                                className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
+                                placeholder="Minimum price"
+                              />
+                              <input
+                                type="number"
+                                min="0"
+                                value={editingListingDraft.price_max}
+                                onChange={(event) => setEditingListingDraft((current) => ({ ...current, price_max: event.target.value }))}
+                                className="bg-[#f7f3ed] rounded-xl px-4 py-3 outline-none"
+                                placeholder="Maximum price"
+                              />
+                            </div>
+
+                            <label className="inline-flex items-center gap-2 text-sm font-medium text-[#1c1c18]">
+                              <input
+                                type="checkbox"
+                                checked={editingListingDraft.is_active}
+                                onChange={(event) => setEditingListingDraft((current) => ({ ...current, is_active: event.target.checked }))}
+                              />
+                              Keep listing active in marketplace
+                            </label>
+
+                            <div className="flex flex-wrap gap-3">
+                              <button
+                                onClick={() => handleSaveListing(listing.id)}
+                                disabled={savingListingId === listing.id}
+                                className="bg-[#500088] text-white rounded-xl px-5 py-3 inline-flex items-center gap-2 font-bold disabled:opacity-70"
+                              >
+                                <Save size={16} /> {savingListingId === listing.id ? "Saving..." : "Save Changes"}
+                              </button>
+                              <button onClick={cancelEditingListing} className="border border-[#cfc2d4] text-[#1c1c18] rounded-xl px-5 py-3 font-bold hover:border-[#500088] transition-colors">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </section>
         </div>

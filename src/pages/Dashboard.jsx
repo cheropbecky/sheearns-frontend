@@ -3,6 +3,7 @@ import {
   Award,
   Star,
   Flame,
+  LayoutDashboard,
   Wallet,
   Lock,
   CheckCircle2,
@@ -18,7 +19,9 @@ import { apiRequest } from "../api";
 export default function Dashboard() {
   const { user } = useAuth();
   const [dashboard, setDashboard] = useState(null);
+  const [providerBookings, setProviderBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookingActionLoadingId, setBookingActionLoadingId] = useState("");
   const [actionMessage, setActionMessage] = useState("");
 
   useEffect(() => {
@@ -27,9 +30,13 @@ export default function Dashboard() {
     async function loadDashboard() {
       setLoading(true);
       try {
-        const payload = await apiRequest("/dashboard");
+        const [dashboardPayload, bookingsPayload] = await Promise.all([
+          apiRequest("/dashboard"),
+          apiRequest("/services/bookings/provider"),
+        ]);
         if (cancelled) return;
-        setDashboard(payload);
+        setDashboard(dashboardPayload);
+        setProviderBookings(Array.isArray(bookingsPayload) ? bookingsPayload : []);
       } catch (err) {
         if (cancelled) return;
         setActionMessage(err?.message || "Could not load dashboard data right now.");
@@ -78,6 +85,60 @@ export default function Dashboard() {
     window.dispatchEvent(new PopStateEvent("popstate"));
   };
 
+  const getStatusBadgeClass = (status) => {
+    const normalized = String(status || "pending").toLowerCase();
+    if (normalized === "completed") return "bg-green-100 text-green-700";
+    if (normalized === "accepted") return "bg-blue-100 text-blue-700";
+    if (normalized === "rejected") return "bg-red-100 text-red-700";
+    if (normalized === "cancelled") return "bg-slate-200 text-slate-700";
+    return "bg-amber-100 text-amber-700";
+  };
+
+  const handleUpdateBookingStatus = async (bookingId, nextStatus) => {
+    setBookingActionLoadingId(bookingId);
+    setActionMessage("");
+    try {
+      const updated = await apiRequest(`/services/bookings/${bookingId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: nextStatus }),
+      });
+
+      setProviderBookings((current) =>
+        current.map((booking) =>
+          booking.id === bookingId
+            ? {
+                ...booking,
+                ...updated,
+              }
+            : booking
+        )
+      );
+      setActionMessage(`Booking marked as ${nextStatus}.`);
+      window.setTimeout(() => setActionMessage(""), 2500);
+    } catch (err) {
+      setActionMessage(err?.message || "Could not update booking status.");
+    } finally {
+      setBookingActionLoadingId("");
+    }
+  };
+
+  const handleHideBooking = async (bookingId) => {
+    setBookingActionLoadingId(bookingId);
+    setActionMessage("");
+    try {
+      await apiRequest(`/services/bookings/${bookingId}`, {
+        method: "DELETE",
+      });
+      setProviderBookings((current) => current.filter((booking) => booking.id !== bookingId));
+      setActionMessage("Booking hidden from the dashboard.");
+      window.setTimeout(() => setActionMessage(""), 2500);
+    } catch (err) {
+      setActionMessage(err?.message || "Could not hide booking.");
+    } finally {
+      setBookingActionLoadingId("");
+    }
+  };
+
   const handleQuickAction = async (label) => {
     if (label === "Chat with AI Coach") {
       navigateTo("/ai-coach");
@@ -92,6 +153,11 @@ export default function Dashboard() {
     if (label === "Log Income") {
       window.history.pushState({}, "", "/marketplace");
       window.dispatchEvent(new PopStateEvent("popstate"));
+      return;
+    }
+
+    if (label === "My Bookings") {
+      navigateTo("/bookings");
       return;
     }
 
@@ -204,6 +270,7 @@ export default function Dashboard() {
                       { icon: Bot, label: "Chat with AI Coach" },
                       { icon: FilePenLine, label: "Update My Services" },
                       { icon: Wallet, label: "Log Income" },
+                      { icon: LayoutDashboard, label: "My Bookings" },
                       { icon: Share2, label: "Share Profile" },
                     ].map((action) => (
                       <button
@@ -263,7 +330,7 @@ export default function Dashboard() {
                 className="absolute inset-0 w-full h-full object-cover object-center"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[rgba(80,0,136,0.92)] to-[rgba(148,0,88,0.85)]" />
+              <div className="absolute inset-0 bg-linear-to-r from-[rgba(80,0,136,0.92)] to-[rgba(148,0,88,0.85)]" />
               <div className="relative z-10 max-w-lg">
                 <span className="bg-[rgba(254,166,25,0.25)] text-[#fea619] text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
                   Daily Motivation
@@ -280,6 +347,89 @@ export default function Dashboard() {
                 >
                   Update My Services
                 </button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl p-8 shadow-sm" data-aos="fade-up" data-aos-delay="140">
+              <div className="flex items-center justify-between mb-5 gap-3">
+                <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-2xl">Bookings Dashboard</h2>
+                <span className="bg-[rgba(80,0,136,0.08)] text-[#500088] text-xs font-bold px-3 py-1 rounded-full">
+                  {providerBookings.length} total
+                </span>
+              </div>
+
+              {!providerBookings.length && (
+                <p className="text-[#4c4452] text-sm">No bookings yet. Once clients book your service, they will appear here.</p>
+              )}
+
+              <div className="flex flex-col gap-4">
+                {providerBookings.slice(0, 8).map((booking) => {
+                  const status = String(booking.status || "pending").toLowerCase();
+                  return (
+                    <div key={booking.id} className="bg-[#f7f3ed] rounded-2xl p-4">
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div>
+                          <p className="font-bold text-[#1c1c18] text-sm">{booking.service_title || "Service"}</p>
+                          <p className="text-[#4c4452] text-xs">Client: {booking.customer_name || "Unknown"}</p>
+                          <p className="text-[#4c4452] text-xs">Amount: Ksh {Number(booking.amount || 0).toLocaleString()}</p>
+                        </div>
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${getStatusBadgeClass(status)}`}>
+                          {status}
+                        </span>
+                      </div>
+
+                      {booking.message && <p className="text-[#4c4452] text-xs mb-3">"{booking.message}"</p>}
+
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleHideBooking(booking.id)}
+                          disabled={bookingActionLoadingId === booking.id}
+                          className="bg-white text-[#4c4452] border border-[rgba(76,68,82,0.15)] text-xs font-bold px-3 py-2 rounded-xl disabled:opacity-60"
+                        >
+                          Hide
+                        </button>
+
+                        {status === "pending" && (
+                          <>
+                            <button
+                              onClick={() => handleUpdateBookingStatus(booking.id, "accepted")}
+                              disabled={bookingActionLoadingId === booking.id}
+                              className="bg-[#500088] text-white text-xs font-bold px-3 py-2 rounded-xl disabled:opacity-60"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => handleUpdateBookingStatus(booking.id, "rejected")}
+                              disabled={bookingActionLoadingId === booking.id}
+                              className="bg-[#e96a4b] text-white text-xs font-bold px-3 py-2 rounded-xl disabled:opacity-60"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+
+                        {status === "accepted" && (
+                          <>
+                            <button
+                              onClick={() => handleUpdateBookingStatus(booking.id, "completed")}
+                              disabled={bookingActionLoadingId === booking.id}
+                              className="bg-green-600 text-white text-xs font-bold px-3 py-2 rounded-xl disabled:opacity-60"
+                            >
+                              Mark Completed
+                            </button>
+                            <button
+                              onClick={() => handleUpdateBookingStatus(booking.id, "cancelled")}
+                              disabled={bookingActionLoadingId === booking.id}
+                              className="bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded-xl disabled:opacity-60"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
