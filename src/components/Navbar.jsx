@@ -142,9 +142,26 @@ export default function Navbar({ active = "" }) {
 
         <div className="md:hidden flex items-center gap-2">
           {isLoggedIn && (
-            <a href="/dashboard" className="no-underline text-[#500088] text-xs font-bold px-3 py-2 rounded-xl bg-[rgba(80,0,136,0.08)] inline-flex items-center gap-1">
-              <LayoutDashboard size={14} /> Dashboard
-            </a>
+            <>
+              <a href="/dashboard" className="no-underline text-[#500088] text-xs font-bold px-3 py-2 rounded-xl bg-[rgba(80,0,136,0.08)] inline-flex items-center gap-1">
+                <LayoutDashboard size={14} /> Dashboard
+              </a>
+              <a
+                href="/profile"
+                aria-label="My Profile"
+                className="no-underline bg-[#fea619] text-[#684000] w-9 h-9 rounded-full font-bold text-sm hover:opacity-90 transition-opacity inline-flex items-center justify-center"
+              >
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt="Profile"
+                    className="w-9 h-9 rounded-full object-cover"
+                  />
+                ) : (
+                  user?.name?.charAt(0) || "Q"
+                )}
+              </a>
+            </>
           )}
           <button className="text-[#500088]" onClick={() => setMobileOpen((prev) => !prev)}>
             {mobileOpen ? <X size={24} strokeWidth={1.8} /> : <Menu size={24} strokeWidth={1.8} />}
@@ -161,6 +178,7 @@ export default function Navbar({ active = "" }) {
             <div className="pt-2 border-t border-[rgba(207,194,212,0.2)] flex flex-col gap-2">
               <a href="/dashboard" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Dashboard</a>
               <a href="/bookings" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Bookings</a>
+              <a href="/profile" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Profile</a>
               <button onClick={logout} className="text-center border border-red-200 py-3 rounded-2xl text-red-500 font-bold">Log Out</button>
             </div>
           ) : (
