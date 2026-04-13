@@ -46,6 +46,11 @@ function getCacheKey(url, method, authToken) {
   return `${method}:${url}:${authToken || "anonymous"}`;
 }
 
+function invalidateGetCache() {
+  getCache.clear();
+  inFlightGetRequests.clear();
+}
+
 async function apiRequest(path, options = {}) {
   const { disableCache = false, ...fetchOptions } = options;
   let authHeader = {};
@@ -113,6 +118,8 @@ async function apiRequest(path, options = {}) {
         payload,
         expiresAt: Date.now() + GET_CACHE_TTL_MS,
       });
+    } else if (method !== "GET") {
+      invalidateGetCache();
     }
 
     return payload;

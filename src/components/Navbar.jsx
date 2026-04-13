@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard, User, Settings, LogOut } from "lucide-react";
+import { Menu, X, LayoutDashboard, User, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { logo } from "../assets/localImages";
 
@@ -21,6 +21,7 @@ const linkHrefMap = {
 
 export default function Navbar({ active = "" }) {
   const { isLoggedIn, user, logout } = useAuth();
+  const isAdmin = Boolean(user?.is_admin || user?.isAdmin);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -70,6 +71,12 @@ export default function Navbar({ active = "" }) {
         <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
+              {isAdmin && (
+                <a href="/admin" className="flex items-center gap-2 bg-[rgba(148,0,88,0.08)] text-[#940058] font-bold text-sm px-4 py-2.5 rounded-2xl hover:bg-[rgba(148,0,88,0.15)] transition-colors no-underline">
+                  <ShieldCheck size={16} />
+                  Admin Dashboard
+                </a>
+              )}
               <a href="/dashboard" className="flex items-center gap-2 bg-[rgba(80,0,136,0.08)] text-[#500088] font-bold text-sm px-4 py-2.5 rounded-2xl hover:bg-[rgba(80,0,136,0.15)] transition-colors no-underline">
                 <LayoutDashboard size={16} />
                 My Dashboard
@@ -98,10 +105,11 @@ export default function Navbar({ active = "" }) {
                         {user?.name || "Queen"}
                       </p>
                       <p className="text-[#4c4452] text-xs">
-                        SheEarns Member
+                        {isAdmin ? "Admin" : "SheEarns Member"}
                       </p>
                     </div>
                     {[
+                      ...(isAdmin ? [{ icon: ShieldCheck, label: "Admin Dashboard", href: "/admin" }] : []),
                       { icon: LayoutDashboard, label: "My Dashboard", href: "/dashboard" },
                       { icon: LayoutDashboard, label: "My Bookings", href: "/bookings" },
                       { icon: User, label: "My Profile", href: "/profile" },
@@ -176,6 +184,7 @@ export default function Navbar({ active = "" }) {
           ))}
           {isLoggedIn ? (
             <div className="pt-2 border-t border-[rgba(207,194,212,0.2)] flex flex-col gap-2">
+              {isAdmin && <a href="/admin" className="no-underline text-center bg-[rgba(148,0,88,0.08)] py-3 rounded-2xl text-[#940058] font-bold">Admin Dashboard</a>}
               <a href="/dashboard" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Dashboard</a>
               <a href="/bookings" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Bookings</a>
               <a href="/profile" className="no-underline text-center bg-[rgba(80,0,136,0.08)] py-3 rounded-2xl text-[#500088] font-bold">My Profile</a>

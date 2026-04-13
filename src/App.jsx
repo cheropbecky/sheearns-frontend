@@ -12,6 +12,7 @@ import Roadmap from "./pages/Roadmap";
 import QueenProfile from "./pages/QueenProfile";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import AdminDashboard from "./pages/AdminDashboard";
 import { Login, Signup } from "./pages/Auth";
 
 function NotFound() {
@@ -79,6 +80,8 @@ export default function App() {
     "/aicoach": <AICoach />,
     "/ai-coach": <AICoach />,
     "/dashboard": <Dashboard />,
+    "/admin": <AdminDashboard />,
+    "/admin-dashboard": <AdminDashboard />,
     "/bookings": <Bookings />,
     "/profile": <Profile />,
     "/settings": <Settings />,

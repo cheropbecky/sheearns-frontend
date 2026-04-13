@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../api";
+import LoadingDots from "../components/LoadingDots";
 
 const defaultServices = ["Hair Braiding", "Home Service Styling"];
 const marketplaceCategories = [
@@ -104,6 +105,9 @@ export default function Profile() {
           services: payload?.services || [],
           notificationsEnabled: payload?.notifications_enabled ?? true,
           marketingEmailsEnabled: payload?.marketing_emails_enabled ?? false,
+          is_admin: payload?.is_admin ?? user?.is_admin ?? false,
+          is_suspended: payload?.is_suspended ?? user?.is_suspended ?? false,
+          is_deleted: payload?.is_deleted ?? user?.is_deleted ?? false,
         };
         updateUser(mapped);
         setAvatarDraft(mapped.avatar || "");
@@ -168,6 +172,8 @@ export default function Profile() {
   };
 
   const handleRemoveService = (service) => {
+    const confirmed = window.confirm(`Are you sure you want to remove ${service} from your profile services?`);
+    if (!confirmed) return;
     setServicesDraft((currentServices) => currentServices.filter((item) => item !== service));
   };
 
@@ -192,6 +198,9 @@ export default function Profile() {
         services: payload?.services || servicesDraft,
         notificationsEnabled: payload?.notifications_enabled ?? true,
         marketingEmailsEnabled: payload?.marketing_emails_enabled ?? false,
+        is_admin: payload?.is_admin ?? user?.is_admin ?? false,
+        is_suspended: payload?.is_suspended ?? user?.is_suspended ?? false,
+        is_deleted: payload?.is_deleted ?? user?.is_deleted ?? false,
       });
 
       setNotice("Profile saved successfully.");
@@ -246,7 +255,7 @@ export default function Profile() {
         }),
       });
 
-      setNotice("Listing published. You can now find yourself in Marketplace.");
+      setNotice("Listing published. It will appear in Marketplace after admin approval.");
       setListingTitle("");
       setListingDescription("");
       setPortfolioUrlsText("");
@@ -410,7 +419,7 @@ export default function Profile() {
 
             <div className="mt-6 flex items-center gap-3">
               <button onClick={handleSaveProfile} disabled={saving} className="bg-[#500088] text-white rounded-xl px-5 py-3 inline-flex items-center gap-2 font-bold disabled:opacity-70">
-                <Save size={16} /> {saving ? "Saving..." : "Save Profile"}
+                {saving ? <LoadingDots size={16} color="#ffffff" /> : <Save size={16} />} {saving ? "Saving..." : "Save Profile"}
               </button>
               {notice && <span className="text-sm font-semibold text-[#500088]">{notice}</span>}
             </div>
@@ -512,7 +521,7 @@ export default function Profile() {
                   disabled={publishing}
                   className="bg-[#1c1c18] text-white rounded-xl px-5 py-3 font-bold disabled:opacity-70"
                 >
-                  {publishing ? "Publishing..." : "Publish to Marketplace"}
+                  <span className="inline-flex items-center gap-2">{publishing ? <LoadingDots size={16} color="#ffffff" /> : null}{publishing ? "Publishing..." : "Publish to Marketplace"}</span>
                 </button>
               </div>
             </div>
@@ -541,6 +550,10 @@ export default function Profile() {
                       <div className="h-4 w-1/3 bg-[#e6e2dc] rounded" />
                     </div>
                   ))}
+                  <div className="flex items-center gap-3 text-sm text-[#4c4452]">
+                    <LoadingDots size={20} />
+                    Loading your listings...
+                  </div>
                 </div>
               ) : myListings.length === 0 ? (
                 <div className="bg-[#f7f3ed] rounded-3xl p-6 text-sm text-[#4c4452]">
@@ -549,6 +562,7 @@ export default function Profile() {
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {myListings.map((listing) => {
+                      const approvalStatus = listing.approval_status || (listing.is_active ? "approved" : "pending");
                     const isEditing = editingListingId === listing.id;
                     return (
                       <div key={listing.id} className="border border-[rgba(207,194,212,0.35)] rounded-3xl p-5 bg-white shadow-sm">
@@ -560,6 +574,9 @@ export default function Profile() {
                                   <h4 className="font-bold text-[#1c1c18] text-sm md:text-base">{listing.title}</h4>
                                   <span className={`text-xs font-bold px-2 py-1 rounded-full ${listing.is_active ? "bg-[rgba(22,163,74,0.12)] text-green-700" : "bg-[rgba(220,38,38,0.12)] text-red-700"}`}>
                                     {listing.is_active ? "Active" : "Inactive"}
+                                  </span>
+                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${approvalStatus === "approved" ? "bg-[rgba(22,163,74,0.12)] text-green-700" : approvalStatus === "rejected" ? "bg-[rgba(220,38,38,0.12)] text-red-700" : "bg-[rgba(254,166,25,0.14)] text-[#855300]"}`}>
+                                    {approvalStatus.replace(/^./, (char) => char.toUpperCase())}
                                   </span>
                                 </div>
                                 <p className="text-[#500088] text-sm font-semibold mt-1">{listing.category}</p>
@@ -578,7 +595,7 @@ export default function Profile() {
                                 <PencilLine size={16} /> Edit listing
                               </button>
                               <button onClick={() => handleDeleteListing(listing.id)} disabled={deletingListingId === listing.id} className="inline-flex items-center gap-2 bg-[#1c1c18] text-white px-4 py-2.5 rounded-xl text-sm font-bold disabled:opacity-70">
-                                <Trash2 size={16} /> {deletingListingId === listing.id ? "Removing..." : "Remove"}
+                                {deletingListingId === listing.id ? <LoadingDots size={16} color="#ffffff" /> : <Trash2 size={16} />} {deletingListingId === listing.id ? "Removing..." : "Remove"}
                               </button>
                             </div>
                           </div>
@@ -663,7 +680,7 @@ export default function Profile() {
                                 disabled={savingListingId === listing.id}
                                 className="bg-[#500088] text-white rounded-xl px-5 py-3 inline-flex items-center gap-2 font-bold disabled:opacity-70"
                               >
-                                <Save size={16} /> {savingListingId === listing.id ? "Saving..." : "Save Changes"}
+                                {savingListingId === listing.id ? <LoadingDots size={16} color="#ffffff" /> : <Save size={16} />} {savingListingId === listing.id ? "Saving..." : "Save Changes"}
                               </button>
                               <button onClick={cancelEditingListing} className="border border-[#cfc2d4] text-[#1c1c18] rounded-xl px-5 py-3 font-bold hover:border-[#500088] transition-colors">
                                 Cancel

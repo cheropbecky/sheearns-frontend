@@ -82,6 +82,9 @@ export function Login({ onNavigate }) {
         services: payload?.user?.services || [],
         notificationsEnabled: payload?.user?.notifications_enabled ?? true,
         marketingEmailsEnabled: payload?.user?.marketing_emails_enabled ?? false,
+        is_admin: payload?.user?.is_admin ?? false,
+        is_suspended: payload?.user?.is_suspended ?? false,
+        is_deleted: payload?.user?.is_deleted ?? false,
       });
       onNavigate("");
     } catch (err) {
@@ -272,6 +275,9 @@ export function Signup({ onNavigate }) {
         services: payload?.user?.services || [],
         notificationsEnabled: payload?.user?.notifications_enabled ?? true,
         marketingEmailsEnabled: payload?.user?.marketing_emails_enabled ?? false,
+        is_admin: payload?.user?.is_admin ?? false,
+        is_suspended: payload?.user?.is_suspended ?? false,
+        is_deleted: payload?.user?.is_deleted ?? false,
       });
       onNavigate("");
     } catch (err) {
