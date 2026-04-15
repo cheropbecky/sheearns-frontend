@@ -17,6 +17,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { apiRequest } from "../api";
 import LoadingDots from "../components/LoadingDots";
+import adminHeroImage from "../assets/pexels-planeteelevene-32617905.jpg";
 
 const sections = [
   { id: "overview", label: "Overview", icon: BarChart3 },
@@ -229,25 +230,33 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(80,0,136,0.10),transparent_32%),linear-gradient(180deg,#fdf9f3_0%,#fbf6ff_100%)] font-['Inter',sans-serif]">
       <Navbar active="Dashboard" isLoggedIn />
 
-      <main className="pt-28 pb-24 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col gap-8">
-          <section className="bg-white/90 backdrop-blur rounded-4xl p-8 shadow-sm border border-[rgba(207,194,212,0.2)] overflow-hidden relative">
+      <main className="pt-20 sm:pt-28 pb-16 sm:pb-24 px-3 sm:px-4 md:px-6">
+        <div className="max-w-7xl mx-auto flex flex-col gap-4 sm:gap-6 md:gap-8">
+          <section
+            className="rounded-2xl sm:rounded-4xl p-4 sm:p-6 md:p-8 shadow-sm border border-[rgba(207,194,212,0.2)] overflow-hidden relative bg-[#f7f3ed] min-h-60 sm:min-h-80"
+          >
+            <img
+              src={adminHeroImage}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover object-center opacity-100"
+              loading="lazy"
+            />
             <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-[rgba(80,0,136,0.08)]" />
             <div className="absolute -left-10 bottom-0 w-40 h-40 rounded-full bg-[rgba(254,166,25,0.08)]" />
-            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-3xl">
+            <div className="relative z-10 flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="rounded-3xl bg-[rgba(28,28,24,0.22)] backdrop-blur-[2px] p-4 sm:p-5 md:p-6 max-w-full lg:max-w-3xl">
                 <Badge tone="purple">Admin console</Badge>
-                <h1 className="mt-4 font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#1c1c18] text-3xl sm:text-4xl lg:text-5xl leading-tight">
+                <h1 className="mt-3 sm:mt-4 font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
                   SheEarns operations dashboard
                 </h1>
-                <p className="mt-3 text-[#4c4452] text-sm sm:text-base max-w-2xl">
+                <p className="mt-2 sm:mt-3 text-white/90 text-xs sm:text-sm md:text-base max-w-2xl drop-shadow-[0_1px_4px_rgba(0,0,0,0.45)]">
                   Review users, moderate marketplace listings, monitor AI usage, track platform growth, and publish updates from one place.
                 </p>
-                {notice && <p className="mt-4 text-sm font-semibold text-[#500088]">{notice}</p>}
-                {error && <p className="mt-4 text-sm font-semibold text-red-700">{error}</p>}
+                {notice && <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold text-[#fff1c7] drop-shadow-[0_1px_3px_rgba(0,0,0,0.45)]">{notice}</p>}
+                {error && <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold text-[#ffd6d6] drop-shadow-[0_1px_3px_rgba(0,0,0,0.45)]">{error}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 min-w-70">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3 w-full lg:w-auto">
                 {sections.map((section) => {
                   const Icon = section.icon;
                   const active = activeSection === section.id;
@@ -255,11 +264,12 @@ export default function AdminDashboard() {
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`rounded-2xl border px-4 py-3 text-left transition-all ${active ? "bg-[#500088] text-white border-[#500088] shadow-md" : "bg-white text-[#1c1c18] border-[rgba(207,194,212,0.35)] hover:border-[#500088]"}`}
+                      className={`rounded-xl sm:rounded-2xl border px-2 sm:px-4 py-2 sm:py-3 text-left transition-all text-xs sm:text-sm ${active ? "bg-[#500088] text-white border-[#500088] shadow-md" : "bg-white text-[#1c1c18] border-[rgba(207,194,212,0.35)] hover:border-[#500088]"}`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Icon size={16} strokeWidth={1.8} />
-                        <span className="text-sm font-bold">{section.label}</span>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Icon size={14} strokeWidth={1.8} className="sm:w-4" />
+                        <span className="font-bold hidden sm:inline">{section.label}</span>
+                        <span className="font-bold sm:hidden">{section.label.split(' ')[0]}</span>
                       </div>
                     </button>
                   );
@@ -268,21 +278,21 @@ export default function AdminDashboard() {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <section className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             <StatCard icon={Users} label="Total users" value={Number(summary.total_users || 0).toLocaleString()} subtext={`Active ${Number(summary.active_users || 0).toLocaleString()} / inactive ${Number(summary.inactive_users || 0).toLocaleString()}`} />
             <StatCard icon={Store} label="Total services" value={Number(summary.total_services || 0).toLocaleString()} subtext={`Popular: ${popularCategories[0]?.label || "n/a"}`} accent="#855300" />
             <StatCard icon={Wallet} label="Total income" value={formatCurrency(summary.total_income)} subtext={`Last 7 days: ${formatCurrency(summary.income_last_7_days)}`} accent="#0f766e" />
             <StatCard icon={Bot} label="AI conversations" value={Number(summary.ai_conversations || 0).toLocaleString()} subtext={`${Number(summary.misuse_flags || 0).toLocaleString()} misuse flags`} accent="#940058" />
           </section>
 
-          <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-              <div className="flex items-center justify-between gap-4 mb-5">
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="md:col-span-full lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                 <div>
-                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Platform growth</h2>
-                  <p className="text-sm text-[#4c4452] mt-1">Signups and income over the last 14 days.</p>
+                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Platform growth</h2>
+                  <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Signups and income over the last 14 days.</p>
                 </div>
-                <Badge tone="purple">14-day view</Badge>
+                <Badge tone="purple">14-day</Badge>
               </div>
               <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="rounded-2xl bg-[#f7f3ed] p-4">
@@ -332,11 +342,11 @@ export default function AdminDashboard() {
           </section>
 
           {activeSection === "users" && (
-            <section className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-              <div className="flex items-center justify-between gap-4 mb-5">
+            <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                 <div>
-                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">User management</h2>
-                  <p className="text-sm text-[#4c4452] mt-1">See profiles, skills, locations, and account health.</p>
+                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">User management</h2>
+                  <p className="text-xs sm:text-sm text-[#4c4452] mt-1">See profiles, skills, locations, and account health.</p>
                 </div>
                 <Badge tone="purple">{users.length} users</Badge>
               </div>
@@ -391,11 +401,11 @@ export default function AdminDashboard() {
           )}
 
           {activeSection === "marketplace" && (
-            <section className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-              <div className="flex items-center justify-between gap-4 mb-5">
+            <section className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                 <div>
-                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Marketplace management</h2>
-                  <p className="text-sm text-[#4c4452] mt-1">Approve, reject, or remove listings before they reach the marketplace.</p>
+                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Marketplace management</h2>
+                  <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Approve, reject, or remove listings before they reach the marketplace.</p>
                 </div>
                 <Badge tone="purple">{services.length} listings</Badge>
               </div>
@@ -435,7 +445,7 @@ export default function AdminDashboard() {
                 ))}
               </div>
 
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div className="rounded-3xl bg-[#f7f3ed] p-5">
                   <h3 className="font-bold text-[#1c1c18]">Popular categories</h3>
                   <div className="mt-4 flex flex-col gap-3">
@@ -466,11 +476,11 @@ export default function AdminDashboard() {
 
           {activeSection === "ai" && (
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-                <div className="flex items-center justify-between gap-4 mb-5">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                   <div>
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">AI coaching monitor</h2>
-                    <p className="text-sm text-[#4c4452] mt-1">Most common questions and the latest conversation flags.</p>
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">AI coaching monitor</h2>
+                    <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Most common questions and the latest conversation flags.</p>
                   </div>
                   <Badge tone="warning">{Number(aiMonitoring.total_conversations || 0).toLocaleString()} chats</Badge>
                 </div>
@@ -488,11 +498,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-                <div className="flex items-center justify-between gap-4 mb-5">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                   <div>
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Misuse review</h2>
-                    <p className="text-sm text-[#4c4452] mt-1">Flagged prompts need manual review.</p>
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Misuse review</h2>
+                    <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Flagged prompts need manual review.</p>
                   </div>
                   <Badge tone={Number(summary.misuse_flags || 0) > 0 ? "danger" : "success"}>{Number(summary.misuse_flags || 0).toLocaleString()} flags</Badge>
                 </div>
@@ -517,11 +527,11 @@ export default function AdminDashboard() {
 
           {activeSection === "income" && (
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-                <div className="flex items-center justify-between gap-4 mb-5">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                   <div>
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Top earning users</h2>
-                    <p className="text-sm text-[#4c4452] mt-1">Anonymized earnings leaderboard from completed bookings.</p>
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Top earning users</h2>
+                    <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Anonymized earnings leaderboard from completed bookings.</p>
                   </div>
                   <Badge tone="success">{formatCurrency(summary.total_income)}</Badge>
                 </div>
@@ -539,11 +549,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-                <div className="flex items-center justify-between gap-4 mb-5">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
                   <div>
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Growth by day</h2>
-                    <p className="text-sm text-[#4c4452] mt-1">Income over the last 14 days.</p>
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Growth by day</h2>
+                    <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Income over the last 14 days.</p>
                   </div>
                   <Badge tone="purple">Trend</Badge>
                 </div>
@@ -553,66 +563,66 @@ export default function AdminDashboard() {
           )}
 
           {activeSection === "announcements" && (
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-                <div className="flex items-center gap-3 mb-5">
-                  <Megaphone className="text-[#500088]" size={20} strokeWidth={1.8} />
-                  <div>
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Send announcement</h2>
-                    <p className="text-sm text-[#4c4452] mt-1">Broadcast a message to users and keep the feed updated.</p>
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+                <div className="flex items-start gap-3 mb-4 sm:mb-5">
+                  <Megaphone className="text-[#500088] shrink-0 mt-0.5" size={18} strokeWidth={1.8} />
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Send announcement</h2>
+                    <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Broadcast a message to users and keep the feed updated.</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleAnnouncementSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleAnnouncementSubmit} className="flex flex-col gap-3 sm:gap-4">
                   <input
                     value={announcement.title}
                     onChange={(event) => setAnnouncement((current) => ({ ...current, title: event.target.value }))}
                     placeholder="Announcement title"
-                    className="w-full rounded-2xl bg-[#f7f3ed] px-4 py-3 text-[#1c1c18] outline-none focus:ring-2 focus:ring-[#500088]"
+                    className="w-full rounded-xl sm:rounded-2xl bg-[#f7f3ed] px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-[#1c1c18] outline-none focus:ring-2 focus:ring-[#500088]"
                   />
                   <textarea
                     value={announcement.body}
                     onChange={(event) => setAnnouncement((current) => ({ ...current, body: event.target.value }))}
                     placeholder="Write the update for all users"
-                    rows={5}
-                    className="w-full rounded-2xl bg-[#f7f3ed] px-4 py-3 text-[#1c1c18] outline-none focus:ring-2 focus:ring-[#500088] resize-none"
+                    rows={4}
+                    className="w-full rounded-xl sm:rounded-2xl bg-[#f7f3ed] px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-[#1c1c18] outline-none focus:ring-2 focus:ring-[#500088] resize-none"
                   />
                   <button
                     type="submit"
                     disabled={actionId === "announcement"}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#500088] px-5 py-3 text-white font-bold disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-[#500088] px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-white font-bold disabled:opacity-60"
                   >
                     {actionId === "announcement" ? <LoadingDots size={16} color="#ffffff" /> : <Send size={16} strokeWidth={1.8} />} {actionId === "announcement" ? "Sending..." : "Send to users"}
                   </button>
                 </form>
               </div>
 
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
-                <div className="flex items-center gap-3 mb-5">
-                  <Activity className="text-[#855300]" size={20} strokeWidth={1.8} />
-                  <div>
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-xl sm:text-2xl font-bold text-[#1c1c18]">Recent announcements</h2>
-                    <p className="text-sm text-[#4c4452] mt-1">Track what has already been sent.</p>
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)]">
+                <div className="flex items-center gap-3 mb-4 sm:mb-5">
+                  <Activity className="text-[#855300] shrink-0" size={18} strokeWidth={1.8} />
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-[#1c1c18]">Recent announcements</h2>
+                    <p className="text-xs sm:text-sm text-[#4c4452] mt-1">Track what has already been sent.</p>
                   </div>
                 </div>
                 <div className="flex flex-col gap-3">
                   {announcements.map((item) => (
-                    <div key={item.id} className="rounded-2xl bg-[#f7f3ed] p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="font-bold text-[#1c1c18] text-sm">{item.title}</p>
+                    <div key={item.id} className="rounded-2xl bg-[#f7f3ed] p-3 sm:p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="font-bold text-[#1c1c18] text-xs sm:text-sm break-words">{item.title}</p>
                         <Badge tone="purple">{item.channel}</Badge>
                       </div>
-                      <p className="text-sm text-[#4c4452] mt-2 leading-normal">{item.body}</p>
+                      <p className="text-xs sm:text-sm text-[#4c4452] mt-2 leading-normal">{item.body}</p>
                     </div>
                   ))}
-                  {announcements.length === 0 && <div className="rounded-2xl bg-[#f7f3ed] p-4 text-sm text-[#4c4452]">No announcements yet.</div>}
+                  {announcements.length === 0 && <div className="rounded-2xl bg-[#f7f3ed] p-3 sm:p-4 text-xs sm:text-sm text-[#4c4452]">No announcements yet.</div>}
                 </div>
               </div>
             </section>
           )}
 
           {loading && (
-            <div className="rounded-3xl bg-white p-6 shadow-sm border border-[rgba(207,194,212,0.18)] text-[#4c4452] text-sm flex items-center gap-3">
+            <div className="rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-6 shadow-sm border border-[rgba(207,194,212,0.18)] text-[#4c4452] text-xs sm:text-sm flex items-center gap-3">
               <LoadingDots size={22} />
               Loading admin dashboard...
             </div>

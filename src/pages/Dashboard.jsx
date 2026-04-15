@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 import {
   Award,
-  Star,
   Flame,
-  LayoutDashboard,
-  Wallet,
   Lock,
   CheckCircle2,
-  Bot,
-  FilePenLine,
-  Share2,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { apiRequest } from "../api";
 import { imageTwo } from "../assets/localImages";
+import StatsOverview from "../components/dashboard/StatsOverview";
+import ActivityFeed from "../components/dashboard/ActivityFeed";
+import ActionCenter from "../components/dashboard/ActionCenter";
+import BookingEmptyState from "../components/dashboard/BookingEmptyState";
 
 const DAILY_MOTIVATIONS = [
   {
@@ -58,6 +56,24 @@ function getDailyMotivation() {
   }
 
   return DAILY_MOTIVATIONS[hash];
+}
+
+function BookingSkeletonList() {
+  return (
+    <div className="flex flex-col gap-4 animate-pulse" aria-hidden="true">
+      {[0, 1, 2].map((index) => (
+        <div key={index} className="bg-[#f7f3ed] rounded-2xl p-4">
+          <div className="h-4 w-2/5 rounded bg-[#e7deef] mb-2" />
+          <div className="h-3 w-1/3 rounded bg-[#eee5f4] mb-1" />
+          <div className="h-3 w-1/4 rounded bg-[#eee5f4] mb-3" />
+          <div className="flex gap-2">
+            <div className="h-8 w-16 rounded-xl bg-[#e7deef]" />
+            <div className="h-8 w-20 rounded-xl bg-[#e7deef]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -133,11 +149,11 @@ export default function Dashboard() {
 
   const getStatusBadgeClass = (status) => {
     const normalized = String(status || "pending").toLowerCase();
-    if (normalized === "completed") return "bg-green-100 text-green-700";
-    if (normalized === "accepted") return "bg-blue-100 text-blue-700";
-    if (normalized === "rejected") return "bg-red-100 text-red-700";
-    if (normalized === "cancelled") return "bg-slate-200 text-slate-700";
-    return "bg-amber-100 text-amber-700";
+    if (normalized === "completed") return "bg-[rgba(34,197,94,0.16)] text-[#166534]";
+    if (normalized === "accepted") return "bg-[rgba(59,130,246,0.14)] text-[#1d4ed8]";
+    if (normalized === "rejected") return "bg-[rgba(248,113,113,0.16)] text-[#991b1b]";
+    if (normalized === "cancelled") return "bg-[rgba(100,116,139,0.16)] text-[#334155]";
+    return "bg-[rgba(254,166,25,0.2)] text-[#7c4a03]";
   };
 
   const handleUpdateBookingStatus = async (bookingId, nextStatus) => {
@@ -226,8 +242,8 @@ export default function Dashboard() {
 
         <main className="pt-28 pb-24 px-6">
           <div className="max-w-7xl mx-auto flex flex-col gap-8">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4" data-aos="fade-down">
-              <div>
+            <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-4" data-aos="fade-down">
+              <div className="text-center md:text-left">
                 <h1 className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-[#500088] text-2xl sm:text-3xl lg:text-4xl">
                   {greeting.label}, {firstName} {greeting.emoji}
                 </h1>
@@ -246,91 +262,12 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 flex flex-col gap-6">
-                <div className="bg-white rounded-3xl p-8 shadow-sm relative overflow-hidden" data-aos="fade-up">
-                  <Wallet className="absolute top-5 right-5 text-[rgba(80,0,136,0.08)]" size={80} strokeWidth={1.2} />
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">Income Tracker</h2>
-                      <p className="text-[#4c4452] text-sm mt-1">April Goal: Ksh {goal.toLocaleString()}</p>
-                    </div>
-                    <span className="bg-[rgba(80,0,136,0.08)] text-[#500088] text-xs font-bold px-3 py-1.5 rounded-full">This Month</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                      <p className="text-[#4c4452] text-xs font-medium mb-1">Earned So Far</p>
-                      <p className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#500088] text-xl sm:text-2xl lg:text-3xl">Ksh {earned.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-[#f7f3ed] rounded-2xl p-4">
-                      <p className="text-[#4c4452] text-xs font-medium mb-1">Remaining</p>
-                      <p className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-xl sm:text-2xl lg:text-3xl">Ksh {remaining.toLocaleString()}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#4c4452] font-medium">{Math.round(progress)}% complete</span>
-                      <span className="text-[#500088] font-bold">Goal: Ksh {goal.toLocaleString()}</span>
-                    </div>
-                    <div className="h-4 bg-[#e6e2dc] rounded-full overflow-hidden">
-                      <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #500088, #fea619)" }} />
-                    </div>
-                    <p className="text-[#4c4452] text-xs text-center">You are {Math.round(progress)}% of the way to your goal.</p>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-3xl p-8 shadow-sm" data-aos="fade-up" data-aos-delay="80">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-lg sm:text-xl lg:text-2xl">Recent Activity</h2>
-                    <button className="text-[#500088] text-sm font-bold hover:underline">View All</button>
-                  </div>
-
-                  <div className="flex flex-col divide-y divide-[rgba(207,194,212,0.2)]">
-                    {activities.map((a, i) => (
-                      <div key={i} className="flex items-center gap-4 py-4">
-                        <div className="bg-[#f1ede7] w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
-                          <Star size={18} strokeWidth={1.8} className="text-[#500088]" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-[#1c1c18] font-bold text-sm truncate">{a.title}</p>
-                          </div>
-                          <p className="text-[#4c4452] text-xs truncate">{a.subtitle}</p>
-                        </div>
-                        <span className="text-xs text-[#4c4452] shrink-0">{new Date(a.timestamp).toLocaleDateString()}</span>
-                      </div>
-                    ))}
-
-                    {!activities.length && (
-                      <p className="text-sm text-[#4c4452] py-4">No recent activity yet.</p>
-                    )}
-                  </div>
-                </div>
+                <StatsOverview goal={goal} earned={earned} remaining={remaining} progress={progress} />
+                <ActivityFeed activities={activities} loading={loading} />
               </div>
 
               <div className="flex flex-col gap-6">
-                <div className="bg-white rounded-3xl p-6 shadow-sm" data-aos="fade-up">
-                  <h2 className="font-['Plus_Jakarta_Sans',sans-serif] font-bold text-[#1c1c18] text-xl mb-5">Quick Actions</h2>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { icon: Bot, label: "Chat with AI Coach" },
-                      { icon: FilePenLine, label: "Update My Services" },
-                      { icon: Wallet, label: "Log Income" },
-                      { icon: LayoutDashboard, label: "My Bookings" },
-                      { icon: Share2, label: "Share Profile" },
-                    ].map((action) => (
-                      <button
-                        key={action.label}
-                        onClick={() => handleQuickAction(action.label)}
-                        className="bg-[#f7f3ed] flex flex-col items-center gap-2 py-5 px-3 rounded-2xl hover:bg-[rgba(80,0,136,0.06)] transition-colors shadow-sm"
-                      >
-                        <action.icon size={20} strokeWidth={1.8} className="text-[#500088]" />
-                        <span className="text-[#1c1c18] text-xs font-bold text-center leading-tight">{action.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                  {actionMessage && <p className="text-xs text-[#500088] mt-4 font-semibold">{actionMessage}</p>}
-                </div>
+                <ActionCenter onQuickAction={handleQuickAction} actionMessage={actionMessage} />
 
                 <div className="bg-white rounded-3xl p-6 shadow-sm" data-aos="fade-up" data-aos-delay="80">
                   <div className="flex items-center gap-2 mb-5">
@@ -377,19 +314,19 @@ export default function Dashboard() {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-linear-to-r from-[rgba(80,0,136,0.68)] to-[rgba(148,0,88,0.60)]" />
-              <div className="relative z-10 max-w-lg">
-                <span className="bg-[rgba(254,166,25,0.25)] text-[#fea619] text-xs font-bold uppercase tracking-wide sm:tracking-widest px-3 py-1 rounded-full">
+              <div className="relative z-10 max-w-lg rounded-3xl bg-[rgba(255,255,255,0.12)] backdrop-blur-md border border-white/20 p-5 sm:p-6 shadow-xl">
+                <span className="bg-[rgba(254,166,25,0.32)] text-white text-xs font-bold uppercase tracking-wide sm:tracking-widest px-3 py-1 rounded-full">
                   Daily Motivation
                 </span>
-                <p className="text-white font-bold text-lg sm:text-xl lg:text-2xl mt-3 leading-tight sm:leading-snug font-['Plus_Jakarta_Sans',sans-serif]">
+                <p className="text-white font-bold text-lg sm:text-xl lg:text-2xl mt-3 leading-tight sm:leading-snug font-['Plus_Jakarta_Sans',sans-serif] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
                   "{dailyMotivation.quote}"
                 </p>
-                <p className="text-[#d7a8ff] text-sm mt-3">
+                <p className="text-white/90 text-sm mt-3 drop-shadow-[0_1px_4px_rgba(0,0,0,0.45)]">
                   {dailyMotivation.note}
                 </p>
                 <button
                   onClick={() => handleQuickAction("Update My Services")}
-                  className="mt-4 bg-[#fea619] text-[#684000] font-bold text-sm px-5 py-2.5 rounded-2xl hover:bg-[#ffb930] transition-colors"
+                  className="mt-4 bg-[#fea619] text-[#684000] font-bold text-sm px-5 py-2.5 rounded-2xl hover:bg-[#ffb930] transition-colors shadow-lg"
                 >
                   Update My Services
                 </button>
@@ -404,9 +341,9 @@ export default function Dashboard() {
                 </span>
               </div>
 
-              {!providerBookings.length && (
-                <p className="text-[#4c4452] text-sm">No bookings yet. Once clients book your service, they will appear here.</p>
-              )}
+              {loading && !providerBookings.length && <BookingSkeletonList />}
+
+              {!loading && !providerBookings.length && <BookingEmptyState />}
 
               <div className="flex flex-col gap-4">
                 {providerBookings.slice(0, 8).map((booking) => {
@@ -478,8 +415,6 @@ export default function Dashboard() {
                 })}
               </div>
             </div>
-
-            {loading && <p className="text-[#4c4452] text-sm">Loading your dashboard...</p>}
           </div>
         </main>
 
