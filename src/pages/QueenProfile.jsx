@@ -145,6 +145,7 @@ export default function QueenProfile({ serviceId }) {
   }, [serviceId]);
 
   const reviews = useMemo(() => service?.reviews || [], [service]);
+  const isOwnService = Boolean(user?.id && service?.user_id && service.user_id === user.id);
   const whatsappLink = useMemo(
     () => buildWhatsAppLink(service?.provider_phone, service?.provider_name, service?.title),
     [service?.provider_phone, service?.provider_name, service?.title]
@@ -155,6 +156,11 @@ export default function QueenProfile({ serviceId }) {
     if (!isLoggedIn) {
       window.history.pushState({}, "", "/login");
       window.dispatchEvent(new PopStateEvent("popstate"));
+      return;
+    }
+
+    if (isOwnService) {
+      setNotice("You cannot book your own service.");
       return;
     }
 
@@ -337,8 +343,12 @@ export default function QueenProfile({ serviceId }) {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button onClick={handleBook} className="bg-[#500088] text-white font-bold px-6 py-3 rounded-2xl hover:opacity-90 transition-all duration-200 active:scale-95 inline-flex items-center gap-2">
-                  <Send size={16} strokeWidth={1.5} /> Book Now
+                <button
+                  onClick={handleBook}
+                  disabled={isOwnService}
+                  className="bg-[#500088] text-white font-bold px-6 py-3 rounded-2xl hover:opacity-90 transition-all duration-200 active:scale-95 inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Send size={16} strokeWidth={1.5} /> {isOwnService ? "Your Listing" : "Book Now"}
                 </button>
                 {whatsappLink ? (
                   <a

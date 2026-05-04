@@ -57,7 +57,7 @@ function formatPriceRange(min, max) {
   return `From Ksh ${safeMin.toLocaleString()}`;
 }
 
-function ServiceCard({ service, index, onBook }) {
+function ServiceCard({ service, index, onBook, isOwnService }) {
   const avatar = service.avatar_url || service.provider_avatar_url || service.avatar || service.portfolio_urls?.[0] || queenFallbackAvatars[index % queenFallbackAvatars.length] || fallbackAvatar;
 
   return (
@@ -90,10 +90,11 @@ function ServiceCard({ service, index, onBook }) {
           </a>
           <button
             onClick={() => onBook(service)}
-            className="text-white text-sm font-bold px-4 py-2 rounded-xl hover:opacity-90 transition-all duration-200 active:scale-95 inline-flex items-center gap-1"
+            disabled={isOwnService}
+            className="text-white text-sm font-bold px-4 py-2 rounded-xl hover:opacity-90 transition-all duration-200 active:scale-95 inline-flex items-center gap-1 disabled:cursor-not-allowed disabled:opacity-60"
             style={{ background: "#500088" }}
           >
-            <MessageCircle size={14} strokeWidth={1.8} /> Book
+            <MessageCircle size={14} strokeWidth={1.8} /> {isOwnService ? "Your listing" : "Book"}
           </button>
         </div>
       </div>
@@ -102,7 +103,7 @@ function ServiceCard({ service, index, onBook }) {
 }
 
 export default function Marketplace() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(6);
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
@@ -210,6 +211,11 @@ export default function Marketplace() {
     if (!isLoggedIn) {
       window.history.pushState({}, "", "/login");
       window.dispatchEvent(new PopStateEvent("popstate"));
+      return;
+    }
+
+    if (service?.user_id && user?.id && service.user_id === user.id) {
+      setNotice("You cannot book your own listing.");
       return;
     }
 
@@ -400,7 +406,13 @@ export default function Marketplace() {
               ))}
 
             {visibleServices.map((service, i) => (
-              <ServiceCard key={service.id} service={service} index={i} onBook={handleBook} />
+              <ServiceCard
+                key={service.id}
+                service={service}
+                index={i}
+                onBook={handleBook}
+                isOwnService={Boolean(user?.id && service.user_id === user.id)}
+              />
             ))}
 
             {!loading && visibleServices.length === 0 && (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Menu, X, LayoutDashboard, User, Settings, LogOut, ShieldCheck } from "lucide-react";
+import { Menu, X, LayoutDashboard, User, Settings, LogOut, ShieldCheck, Bell } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { apiRequest } from "../api";
 import { logo } from "../assets/localImages";
 
 const links = [
@@ -25,6 +26,16 @@ export default function Navbar({ active = "" }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [announcements, setAnnouncements] = useState([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [lastReadAt, setLastReadAt] = useState("");
+
+  const notificationStorageKey = user?.id
+    ? `sheearns_notifications_last_read:${user.id}`
+    : user?.email
+      ? `sheearns_notifications_last_read:${String(user.email).toLowerCase()}`
+      : "";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -37,10 +48,112 @@ export default function Navbar({ active = "" }) {
       if (!e.target.closest("[data-dropdown]")) {
         setDropdownOpen(false);
       }
+      if (!e.target.closest("[data-notifications]")) {
+        setNotificationsOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAnnouncements() {
+      if (!isLoggedIn) {
+        setAnnouncements([]);
+        setLastReadAt("");
+        return;
+      }
+
+      if (notificationStorageKey) {
+        setLastReadAt(localStorage.getItem(notificationStorageKey) || "");
+      }
+
+      setNotificationsLoading(true);
+      try {
+        const payload = await apiRequest("/dashboard/announcements", { disableCache: true });
+        if (cancelled) return;
+        setAnnouncements(Array.isArray(payload?.announcements) ? payload.announcements : []);
+      } catch {
+        if (cancelled) return;
+        setAnnouncements([]);
+      } finally {
+        if (!cancelled) setNotificationsLoading(false);
+      }
+    }
+
+    loadAnnouncements();
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn, notificationStorageKey]);
+
+  const lastReadTimestamp = lastReadAt ? new Date(lastReadAt).getTime() : 0;
+  const unreadCount = announcements.filter((item) => {
+    const createdAt = item?.created_at ? new Date(item.created_at).getTime() : 0;
+    if (!createdAt) {
+      return !lastReadTimestamp;
+    }
+    return createdAt > lastReadTimestamp;
+  }).length;
+
+  const notificationBadgeCount = unreadCount > 99 ? "99+" : String(unreadCount);
+
+  const markNotificationsAsRead = () => {
+    const latestCreatedAt = announcements[0]?.created_at;
+    if (!latestCreatedAt || !notificationStorageKey) return;
+    localStorage.setItem(notificationStorageKey, latestCreatedAt);
+    setLastReadAt(latestCreatedAt);
+  };
+
+  const handleToggleNotifications = () => {
+    const opening = !notificationsOpen;
+    setNotificationsOpen(opening);
+    if (opening && unreadCount > 0) {
+      markNotificationsAsRead();
+    }
+  };
+
+  const formatAnnouncementTime = (value) => {
+    if (!value) return "";
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return "";
+    return parsed.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
+  const notificationPanel = (
+    <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-xl border border-[rgba(207,194,212,0.3)] w-80 max-w-[92vw] overflow-hidden z-50">
+      <div className="px-4 py-3 border-b border-[rgba(207,194,212,0.2)] flex items-center justify-between">
+        <p className="font-bold text-[#1c1c18] text-sm">Notifications</p>
+        {!!unreadCount && <span className="text-xs font-bold text-[#b42318]">{notificationBadgeCount} new</span>}
+      </div>
+      <div className="max-h-80 overflow-y-auto">
+        {notificationsLoading && (
+          <p className="px-4 py-6 text-sm text-[#6b6570]">Loading notifications...</p>
+        )}
+
+        {!notificationsLoading && !announcements.length && (
+          <p className="px-4 py-6 text-sm text-[#6b6570]">No announcements yet.</p>
+        )}
+
+        {!notificationsLoading && announcements.map((item) => (
+          <div key={item.id || item.created_at || item.title} className="px-4 py-3 border-b border-[rgba(207,194,212,0.14)] last:border-b-0">
+            <p className="font-semibold text-[#1c1c18] text-sm leading-snug">{item.title || "Announcement"}</p>
+            <p className="text-[#4c4452] text-xs mt-1 leading-relaxed">{item.body || ""}</p>
+            {!!item.created_at && (
+              <p className="text-[#8d8596] text-[11px] mt-2">{formatAnnouncementTime(item.created_at)}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <nav
@@ -71,6 +184,22 @@ export default function Navbar({ active = "" }) {
         <div className="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
+              <div className="relative" data-notifications>
+                <button
+                  onClick={handleToggleNotifications}
+                  aria-label="Open notifications"
+                  className="relative flex items-center justify-center w-10 h-10 rounded-full border border-[rgba(207,194,212,0.45)] bg-white text-[#500088] hover:bg-[rgba(80,0,136,0.06)] transition-colors"
+                >
+                  <Bell size={17} />
+                  {!!unreadCount && (
+                    <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-[#dc2626] text-white text-[10px] font-extrabold flex items-center justify-center leading-none">
+                      {notificationBadgeCount}
+                    </span>
+                  )}
+                </button>
+                {notificationsOpen && notificationPanel}
+              </div>
+
               {isAdmin && (
                 <a href="/admin" className="flex items-center gap-2 bg-[rgba(148,0,88,0.08)] text-[#940058] font-bold text-sm px-4 py-2.5 rounded-2xl hover:bg-[rgba(148,0,88,0.15)] transition-colors no-underline">
                   <ShieldCheck size={16} />
@@ -151,6 +280,18 @@ export default function Navbar({ active = "" }) {
         <div className="md:hidden flex items-center gap-2">
           {isLoggedIn && (
             <>
+              <div className="relative" data-notifications>
+                <button
+                  onClick={handleToggleNotifications}
+                  aria-label="Open notifications"
+                  className="relative w-9 h-9 rounded-full border border-[rgba(207,194,212,0.45)] bg-white text-[#500088] inline-flex items-center justify-center"
+                >
+                  <Bell size={15} />
+                  {!!unreadCount && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#dc2626]" />}
+                </button>
+                {notificationsOpen && notificationPanel}
+              </div>
+
               <a href="/dashboard" className="no-underline text-[#500088] text-xs font-bold px-3 py-2 rounded-xl bg-[rgba(80,0,136,0.08)] inline-flex items-center gap-1">
                 <LayoutDashboard size={14} /> Dashboard
               </a>

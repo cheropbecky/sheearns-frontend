@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
 import { Login, Signup } from "./pages/Auth";
+import FloatingAIChat from "./components/FloatingAIChat";
 
 function NotFound() {
   return (
@@ -99,5 +100,12 @@ export default function App() {
     }} />,
   };
 
-  return routes[route] || <NotFound />;
+  const pageComponent = routes[route] || <NotFound />;
+
+  return (
+    <>
+      {pageComponent}
+      <FloatingAIChat currentPath={route} />
+    </>
+  );
 }
